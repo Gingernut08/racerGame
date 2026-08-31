@@ -1,2 +1,2 @@
-import pygame
+import pygame, os
 from PIL import Image

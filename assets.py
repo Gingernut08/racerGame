@@ -1,15 +1,16 @@
-from imports import pygame, Image
+from imports import pygame, Image, os
 
 class Car:
     def __init__(self, size):
         self.pos = [500, 500]
+        self.angle = 1
         self.size = size
         self.colorOne = (255, 255, 0)
         self.colorTwo = (0, 255, 255)
         self.colorThree = (255, 0, 255)
-        self.imageFile = "Textures\\RGBBlackCar.png"
+        self.imageFile = os.path.join("Textures", "RGBBlackCar.png")
         self.texture = pygame.transform.scale(
-            pygame.image.load("Textures\\CarTexture.png").convert_alpha(),
+            pygame.image.load(os.path.join("Textures", "CarTexture.png")).convert_alpha(),
             (self.size, self.size))
         self.change_colors()
 
@@ -38,7 +39,12 @@ class Car:
         (self.size, self.size))
 
     def draw(self, screen):
-        # Draw Car Image
-        screen.blit(self.image, self.pos)
-        # Draw Car Texture Overlay
-        screen.blit(self.texture, self.pos)
+        # rotated = pygame.transform.rotate(self.image, self.angle)
+        rotated_image = pygame.transform.rotate(self.image, self.angle)
+        rotated_texture = pygame.transform.rotate(self.texture, self.angle)
+
+        rect = rotated_image.get_rect(center=self.pos)
+        screen.blit(rotated_image, rect)
+
+        texture_rect = rotated_texture.get_rect(center=self.pos)
+        screen.blit(rotated_texture, texture_rect)
