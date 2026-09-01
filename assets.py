@@ -1,7 +1,11 @@
-from imports import pygame, Image, os
+from imports import pygame, Image, os, sin, cos, radians
+
+turnSpeed = 5
+moveSpeed = 5
 
 class Car:
     def __init__(self, size):
+        self.movement = [0, 0]
         self.pos = [500, 500]
         self.angle = 1
         self.size = size
@@ -48,3 +52,41 @@ class Car:
 
         texture_rect = rotated_texture.get_rect(center=self.pos)
         screen.blit(rotated_texture, texture_rect)
+
+    def move_ammount(self, ammount):
+        angle = radians(self.angle)
+        
+        forward = pygame.Vector2(
+            -sin(angle),
+            -cos(angle)
+        )
+        
+        self.pos += forward * ammount
+
+
+    def calculate_movement(self):
+        
+        angle = radians(self.angle)
+    
+        forward = pygame.Vector2(
+            -sin(angle),
+            -cos(angle)
+        )
+        
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.movment[1] = 1
+            self.angle += turnSpeed
+        elif keys[pygame.K_d]:
+            self.movment[1] = -1
+            self.angle -= turnSpeed
+        else:
+            self.movment[1] = 0
+        if keys[pygame.K_w]:
+            self.movment[0] = 1
+            self.move_ammount(moveSpeed)
+        elif keys[pygame.K_s]:
+            self.movment[0] = -1
+            self.move_ammount(-moveSpeed)
+        else:
+            self.movment[0] = 0
