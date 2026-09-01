@@ -5,14 +5,14 @@ from math import sin, cos, radians
 pygame.init()
 WIDTH = 1920
 HEIGHT = 1080
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Car Colour Changer")
 
 clock = pygame.time.Clock()
 running = True
 bgColor = (150, 150, 150)
 
-carTest = Car(200)
+carTest = Car(100)
 
 while running:
     # Get all events
