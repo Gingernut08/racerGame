@@ -1,12 +1,15 @@
-from imports import pygame, Image, os, sin, cos, radians
+from imports import pygame, Image, os, time, sin, cos, radians
 
 turnSpeed = 4
 moveSpeed = 10
+acceleration = 0.2
+reverseAcceleration = 0.2
+friction = 0.05
 
 class Car:
     def __init__(self, size):
-        self.movement = [0, 0] # [1 = forward -1 = back, 1 = left -1 = right]
-        self.dotShown = False
+        self.movementKeys = [0, 0] # [1 = forward -1 = back, 1 = left -1 = right]
+        self.movement = [0, 0]
         self.pos = pygame.Vector2(500, 500)
         self.angle = 1
         self.size = size
@@ -18,8 +21,11 @@ class Car:
             pygame.image.load(os.path.join("Textures", "CarTexture.png")).convert_alpha(),
             (self.size, self.size))
         self.change_colors()
+        self.turnTime = time.time()
+        self.moveTime = time.time()
         
         # debug
+        self.dotShown = False
         self.pivots = [pygame.Vector2(self.image.get_width() / 2, 0.2 * self.image.get_height()), pygame.Vector2(self.image.get_height() / 2)]
         self.pivotNum = 0
 
@@ -68,7 +74,6 @@ class Car:
 
         return rect, texture_rect
 
-
     def draw(self, screen):
         rotated_image = pygame.transform.rotate(self.image, self.angle)
         rotated_texture = pygame.transform.rotate(self.texture, self.angle)
@@ -89,22 +94,40 @@ class Car:
         
         self.pos += forward * ammount
 
+    def calculate_velocity(self):
+        timeMoving = time.time() - self.moveTime
+        if self.movementKeys[0] ==  1:
+            self.movement[0] += acceleration
+        elif self.movementKeys[0] ==  -1:
+            self.movement[0] -= reverseAcceleration
+        else:
+            if self.movement[0] > 0:
+                self.movement[0] -= friction
+            elif self.movement[0] < 0:
+                self.movement[0] += friction
+        self.movement[0] = max(-moveSpeed, min(moveSpeed, self.movement[0]))
 
     def get_key_inputs(self):
         keys = pygame.key.get_pressed()
+        keysJust = pygame.key.get_just_pressed()
 
-        self.movement[0] = 0
-        self.movement[1] = 0
+        self.movementKeys[0] = 0
+        self.movementKeys[1] = 0
 
         if keys[pygame.K_w]:
-            self.movement[0] += 1
+            self.movementKeys[0] += 1
         if keys[pygame.K_s]:
-            self.movement[0] -= 1
+            self.movementKeys[0] -= 1
 
         if keys[pygame.K_a]:
-            self.movement[1] += 1
+            self.movementKeys[1] += 1
         if keys[pygame.K_d]:
-            self.movement[1] -= 1
+            self.movementKeys[1] -= 1
+        
+        if keysJust[pygame.K_a] or keysJust[pygame.K_d]:
+            self.turnTime = time.time()
+        if keysJust[pygame.K_w] or keysJust[pygame.K_s]:
+            self.moveTime = time.time()
         
         if pygame.key.get_just_released()[pygame.K_SPACE]:
             self.dotShown = not self.dotShown
@@ -123,5 +146,8 @@ class Car:
         )
         
         self.get_key_inputs()
-        self.angle += self.movement[0] * self.movement[1] * turnSpeed
-        self.pos += forward * self.movement[0] * moveSpeed
+        self.angle += self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * turnSpeed
+        
+        self.calculate_velocity()
+        self.move_ammount(self.movement[0])
+        # self.pos += forward * self.movementKeys[0] * moveSpeed
