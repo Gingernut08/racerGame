@@ -11,4 +11,12 @@ car=pygame.transform.scale(car,(50,50))
 carx=300
 cary=500
 running=True
-           
+while running:
+    for event in pygame.event.get():
+        if event.type ==pygame.QUIT:
+            running=False
+    canvas.blit(bg,(0,0))           
+    canvas.blit(car, (carx, cary))
+    pygame.display.flip()
+    fps.tick(60)
+pygame.quit()
