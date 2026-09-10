@@ -1,4 +1,4 @@
-from imports import pygame
+from imports import pygame, os
 from assets import Car
 from math import sin, cos, radians
 
@@ -21,54 +21,71 @@ trackShape = [
     [3, 1],
     [3, 0],
     [2, 0],
-    [1, 0]
+    [1, 0],
+    [1, 1],
+    [2, 1],
+    [2, 2]
 ]
 
 class track:
-    def __init__(self, trackShape):
+    def __init__(self, screen, trackShape):
+        self.surface = screen
         self.tileSize = 100
         self.dimensiotns = [18, 9]
         self.pos = ((WIDTH - self.tileSize * self.dimensiotns[0]) // 2, (HEIGHT - self.tileSize * self.dimensiotns[1]) // 2)
-        self.shape = [["00" for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
+        self.shape = [[0 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
         for item in trackShape:
-            self.shape[item[1]][item[0]] = "01"
+            self.shape[item[1]][item[0]] = 1
         self.states = [row.copy() for row in self.shape]
+        self.tiles = [pygame.transform.scale(
+            pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in range(16)]
     
     def get_around(self, x, y):
         around = [0] * 4
-        if x == 0 or self.shape[y][x - 1] == "01":
+        
+        # this is wrong im dumb
+        # if x == 0 or self.shape[y][x - 1] == "01":
+        #     around[3] = 1
+        # if x + 1 == self.dimensiotns[0] or self.shape[y][x + 1] == "01":
+        #     around[1] = 1
+        # if y == 0  or self.shape[y - 1][x] == "01":
+        #     around[0] = 1
+        # if y + 1 == self.dimensiotns[1] or self.shape[y + 1][x] == "01":
+        #     around[2] = 1
+        if x == 0 or self.shape[y][x - 1] == 0:
             around[3] = 1
-        if x + 1 == self.dimensiotns[0] or self.shape[y][x + 1] == "01":
+        if x + 1 == self.dimensiotns[0] or self.shape[y][x + 1] == 0:
             around[1] = 1
-        if y == 0  or self.shape[y - 1][x] == "01":
+        if y == 0  or self.shape[y - 1][x] == 0:
             around[0] = 1
-        if y + 1 == self.dimensiotns[1] or self.shape[y + 1][x] == "01":
+        if y + 1 == self.dimensiotns[1] or self.shape[y + 1][x] == 0:
             around[2] = 1
         return around
     
     def update_states(self):
         for y in range(self.dimensiotns[1]):
             for x in range(self.dimensiotns[0]):
-                if self.shape[y][x] == "01":
+                if self.shape[y][x] == 1:
                     around = self.get_around(x, y)
                     sum = 0
                     for i in range(4):
                         sum += (2 ** i) * around[i]
-                    if sum < 10:
-                        self.states[y][x] = "0" + str(sum)
-                    else:
-                        self.states[y][x] = str(sum)
+                    self.states[y][x] = sum
 
-trackOne = track(trackShape)
-for row in trackOne.shape:
-    print(" ".join(row))
-print()
+    def draw(self):
+        for y in range(self.dimensiotns[1]):
+            for x in range(self.dimensiotns[0]):
+                drawPos = (self.pos[0] + x * self.tileSize, self.pos[1] + y * self.tileSize)
+                self.tiles[self.states[y][x]].blit(self.surface, drawPos)
 
+
+
+
+
+
+
+trackOne = track(screen, trackShape)
 trackOne.update_states()
-print()
-
-for row in trackOne.states:
-    print(" ".join(row))
 
 clock = pygame.time.Clock()
 running = True
@@ -92,6 +109,7 @@ while running:
     
     # Draw to display
     screen.fill(bgColor)
+    trackOne.draw()
     carTest.draw(screen)
     # update display
     pygame.display.flip()
