@@ -8,6 +8,17 @@ HEIGHT = 1080
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Car Colour Changer")
 
+
+class track:
+    def __init__(self):
+        self.tileSize = 100
+        self.dimensiotns = [18, 9]
+        self.pos = ((WIDTH - self.tileSize * self.dimensiotns[0]) // 2, (HEIGHT - self.tileSize * self.dimensiotns[1]) // 2)
+        self.shape = [["0" for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
+
+trackOne = track()
+print(trackOne.pos)
+
 clock = pygame.time.Clock()
 running = True
 bgColor = (150, 150, 150)
