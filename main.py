@@ -31,12 +31,12 @@ class track:
     def __init__(self, screen, trackShape):
         self.surface = screen
         self.tileSize = 100
-        self.dimensiotns = [18, 9]
+        self.dimensiotns = [18, 10]
         self.pos = ((WIDTH - self.tileSize * self.dimensiotns[0]) // 2, (HEIGHT - self.tileSize * self.dimensiotns[1]) // 2)
-        self.shape = [[0 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
-        for item in trackShape:
-            self.shape[item[1]][item[0]] = 1
-        self.states = [row.copy() for row in self.shape]
+        self.shape = [[1 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
+        # for item in trackShape:
+        #     self.shape[item[1]][item[0]] = 1
+        self.states = [[16 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
         self.tiles = [pygame.transform.scale(
             pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in range(16)]
     
@@ -63,6 +63,7 @@ class track:
         return around
     
     def update_states(self):
+        self.states = [[16 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
         for y in range(self.dimensiotns[1]):
             for x in range(self.dimensiotns[0]):
                 if self.shape[y][x] == 1:
@@ -75,8 +76,9 @@ class track:
     def draw(self):
         for y in range(self.dimensiotns[1]):
             for x in range(self.dimensiotns[0]):
-                drawPos = (self.pos[0] + x * self.tileSize, self.pos[1] + y * self.tileSize)
-                self.tiles[self.states[y][x]].blit(self.surface, drawPos)
+                if self.states[y][x] != 16:
+                    drawPos = (self.pos[0] + x * self.tileSize, self.pos[1] + y * self.tileSize)
+                    self.surface.blit(self.tiles[self.states[y][x]], drawPos)
 
 
 
@@ -89,7 +91,7 @@ trackOne.update_states()
 
 clock = pygame.time.Clock()
 running = True
-bgColor = (150, 150, 150)
+bgColor = (150, 200, 150)
 
 carTest = Car(100)
 

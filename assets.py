@@ -1,10 +1,12 @@
 from imports import pygame, Image, os, time, sin, cos, radians
 
-turnSpeed = 4
-moveSpeed = 10
-acceleration = 0.2
-reverseAcceleration = 0.2
-friction = 0.05
+
+scaler = 0.5
+turnSpeed = 4 * scaler
+moveSpeed = 10 * scaler
+acceleration = 0.2 * scaler
+reverseAcceleration = 0.2 * scaler
+friction = 0.05 * scaler
 
 class Car:
     def __init__(self, size):
