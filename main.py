@@ -40,6 +40,15 @@ class track:
         self.tiles = [pygame.transform.scale(
             pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in range(16)]
     
+    def update_shape(self, pos):
+        index = [
+            (pos[i] - self.pos[i]) // self.tileSize
+            for i in range(2)
+        ]
+        self.shape[index[1]][index[0]] += 1
+        self.shape[index[1]][index[0]] %= 2
+        self.update_states()
+    
     def get_around(self, x, y):
         around = [0] * 4
         
@@ -91,6 +100,7 @@ trackOne.update_states()
 
 clock = pygame.time.Clock()
 running = True
+state = 1
 bgColor = (150, 200, 150)
 
 carTest = Car(100)
@@ -106,13 +116,25 @@ while running:
             # Quit if escape button pressed
             if event.key == pygame.K_ESCAPE:
                 running = False
+            if event.key == pygame.K_p:
+                state += 1
+                state %= 2
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if state == 1:
+                trackOne.update_shape(pygame.mouse.get_pos())
     
-    carTest.calculate_movement()
     
     # Draw to display
     screen.fill(bgColor)
-    trackOne.draw()
-    carTest.draw(screen)
+    
+    if state == 0:
+        carTest.calculate_movement()
+        trackOne.draw()
+        carTest.draw(screen)
+    
+    if state == 1:
+        trackOne.draw()
+    
     # update display
     pygame.display.flip()
     clock.tick(60)
