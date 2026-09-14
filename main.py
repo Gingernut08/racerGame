@@ -19,6 +19,46 @@ class track:
         self.tiles = [pygame.transform.scale(
             pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in range(16)]
     
+    def import_shape(self, base36String):
+        binary = bin(int(base36String, 36))[2:]
+
+        # Restore leading zeros removed by int()
+        total_bits = len(self.shape) * len(self.shape[0])
+        binary = binary.zfill(total_bits)
+
+        index = 0
+
+        for y in range(len(self.shape)):
+            for x in range(len(self.shape[y])):
+                self.shape[y][x] = int(binary[index])
+                index += 1
+
+        self.update_states()
+
+
+    def export_shape(self):
+        binary = ''.join(
+            str(value)
+            for row in self.shape
+            for value in row
+        )
+
+        number = int(binary, 2)
+
+        # Base 36
+        characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+        if number == 0:
+            return '0'
+
+        base36String = ''
+
+        while number:
+            number, remainder = divmod(number, 36)
+            base36String = characters[remainder] + base36String
+
+        return base36String
+        
     def update_shape(self, pos):
         index = [
             (pos[i] - self.pos[i]) // self.tileSize
@@ -112,6 +152,10 @@ while running:
             if event.key == pygame.K_p:
                 state += 1
                 state %= 2
+            if event.key == pygame.K_e:
+                recent = trackOne.export_shape()
+            if event.key == pygame.K_i:
+                trackOne.import_shape(recent)
         if event.type == pygame.MOUSEBUTTONDOWN:
             if state == 1:
                 trackOne.update_shape(pygame.mouse.get_pos())
