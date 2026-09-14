@@ -8,34 +8,13 @@ HEIGHT = 1080
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Car Colour Changer")
 
-
-trackShape = [
-    [0, 0],
-    [0, 1],
-    [0, 2],
-    [1, 2],
-    [1, 3],
-    [2, 3],
-    [3, 3],
-    [3, 2],
-    [3, 1],
-    [3, 0],
-    [2, 0],
-    [1, 0],
-    [1, 1],
-    [2, 1],
-    [2, 2]
-]
-
 class track:
-    def __init__(self, screen, trackShape):
+    def __init__(self, screen):
         self.surface = screen
         self.tileSize = 100
         self.dimensiotns = [18, 10]
         self.pos = ((WIDTH - self.tileSize * self.dimensiotns[0]) // 2, (HEIGHT - self.tileSize * self.dimensiotns[1]) // 2)
-        self.shape = [[1 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
-        # for item in trackShape:
-        #     self.shape[item[1]][item[0]] = 1
+        self.shape = [[0 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
         self.states = [[16 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
         self.tiles = [pygame.transform.scale(
             pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in range(16)]
@@ -83,11 +62,25 @@ class track:
                     self.states[y][x] = sum
 
     def draw(self):
+        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        pygame.draw.rect(
+            overlay,
+            (100, 100, 100, 50),
+            (self.pos[0] - 1, self.pos[1] - 1, self.tileSize * self.dimensiotns[0] + 2, self.tileSize * self.dimensiotns[1] + 2),
+            1
+        )
         for y in range(self.dimensiotns[1]):
             for x in range(self.dimensiotns[0]):
+                pygame.draw.rect(
+                    overlay,
+                    (100, 100, 100, 50),
+                    (self.pos[0] + x * self.tileSize, self.pos[1] + y * self.tileSize, self.tileSize, self.tileSize),
+                    1
+                )
                 if self.states[y][x] != 16:
                     drawPos = (self.pos[0] + x * self.tileSize, self.pos[1] + y * self.tileSize)
                     self.surface.blit(self.tiles[self.states[y][x]], drawPos)
+        self.surface.blit(overlay, (0, 0))
 
 
 
@@ -95,7 +88,7 @@ class track:
 
 
 
-trackOne = track(screen, trackShape)
+trackOne = track(screen)
 trackOne.update_states()
 
 clock = pygame.time.Clock()
@@ -134,6 +127,7 @@ while running:
     
     if state == 1:
         trackOne.draw()
+        
     
     # update display
     pygame.display.flip()
