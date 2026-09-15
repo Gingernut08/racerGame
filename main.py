@@ -1,29 +1,24 @@
-from imports import pygame
-from assets import Car
-from math import sin, cos, radians
+from imports import pygame, os, copy
+from assets import Car, Track, WIDTH, HEIGHT
+from math import sin, cos, radians, log2, ceil
 
 pygame.init()
-WIDTH = 1920
-HEIGHT = 1080
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+pygame.mouse.set_visible(False)
 pygame.display.set_caption("Car Colour Changer")
 
+cursor = pygame.transform.scale(pygame.image.load(os.path.join("Textures", "tempCursor" + ".png")), (50, 50))
 
-class track:
-    def __init__(self):
-        self.tileSize = 100
-        self.dimensiotns = [18, 9]
-        self.pos = ((WIDTH - self.tileSize * self.dimensiotns[0]) // 2, (HEIGHT - self.tileSize * self.dimensiotns[1]) // 2)
-        self.shape = [["0" for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
 
-trackOne = track()
-print(trackOne.pos)
+trackOne = Track(screen)
+trackOne.update_states()
 
 clock = pygame.time.Clock()
 running = True
-bgColor = (150, 150, 150)
+bgColor = (150, 200, 150)
 
-carTest = Car(100)
+state = 0
+
 
 while running:
     # Get all events
@@ -36,12 +31,25 @@ while running:
             # Quit if escape button pressed
             if event.key == pygame.K_ESCAPE:
                 running = False
-    
-    carTest.calculate_movement()
+            if event.key == pygame.K_p:
+                state += 1
+                state %= 2
+            if event.key == pygame.K_e:
+                copy(trackOne.export_shape())
+            if event.key == pygame.K_i:
+                trackOne.import_shape(input())
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if state == 1:
+                trackOne.update_shape(pygame.mouse.get_pos())
     
     # Draw to display
     screen.fill(bgColor)
-    carTest.draw(screen)
+    
+    trackOne.draw(state)
+    if state == 1:
+        screen.blit(cursor, pygame.mouse.get_pos())
+    
+    
     # update display
     pygame.display.flip()
     clock.tick(60)
