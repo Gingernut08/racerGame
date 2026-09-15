@@ -1,6 +1,6 @@
 import pygame
 pygame.init()
-screen=pygame.display.set_mode(0,0),pygame.FULLSCREEN
+screen=pygame.display.set_mode((0,0),pygame.FULLSCREEN)
 (WIDTH,HEIGHT)=screen.get_size()
 screen=pygame.display.set_mode((WIDTH,HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("intro")
