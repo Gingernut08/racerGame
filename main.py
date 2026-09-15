@@ -1,4 +1,4 @@
-from imports import pygame, os
+from imports import pygame, os, copy
 from assets import Car, Track, WIDTH, HEIGHT
 from math import sin, cos, radians, log2, ceil
 
@@ -15,12 +15,10 @@ trackOne.update_states()
 
 clock = pygame.time.Clock()
 running = True
-state = 1
 bgColor = (150, 200, 150)
 
-mouse = True
+state = 0
 
-carTest = Car(100)
 
 while running:
     # Get all events
@@ -37,9 +35,9 @@ while running:
                 state += 1
                 state %= 2
             if event.key == pygame.K_e:
-                recent = trackOne.export_shape()
+                copy(trackOne.export_shape())
             if event.key == pygame.K_i:
-                trackOne.import_shape(recent)
+                trackOne.import_shape(input())
         if event.type == pygame.MOUSEBUTTONDOWN:
             if state == 1:
                 trackOne.update_shape(pygame.mouse.get_pos())
@@ -47,14 +45,8 @@ while running:
     # Draw to display
     screen.fill(bgColor)
     
-    if state == 0:
-        carTest.calculate_movement()
-        trackOne.draw()
-        carTest.draw(screen)
-    
+    trackOne.draw(state)
     if state == 1:
-        trackOne.draw()
-        # Draw Mouse
         screen.blit(cursor, pygame.mouse.get_pos())
     
     

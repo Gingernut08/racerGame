@@ -6,24 +6,35 @@ WIDTH, HEIGHT = 1920, 1080
 BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`¬!\"£$%^&*()-=_+[]#;',./\\{}~:@<>?|"
 
 
-scaler = 1
-turnSpeed = 6 * scaler
-moveSpeed = 10 * scaler
-acceleration = 0.2 * scaler
-reverseAcceleration = 0.2 * scaler
-friction = 0.05 * scaler
-endTurn = 1.5 * scaler
+PADDING = [100, 200, 300, 400]
+
+turnSpeed = 6
+moveSpeed = 15
+acceleration = 0.2
+reverseAcceleration = 0.2
+friction = 0.05
+endTurn = 1.5
+
+
+
+
 
 class Track:
     def __init__(self, screen):
         self.surface = screen
-        self.tileSize = 100
-        self.dimensiotns = [18, 10]
-        self.pos = ((WIDTH - self.tileSize * self.dimensiotns[0]) // 2, (HEIGHT - self.tileSize * self.dimensiotns[1]) // 2)
-        self.shape = [[0 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
-        self.states = [[16 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
+        self.dimensions = [18, 10]
+        tileSizes = [(WIDTH - (PADDING[1] + PADDING[3])) // self.dimensions[0], (HEIGHT -  - (PADDING[0] + PADDING[1])) // self.dimensions[1]]
+        if tileSizes[0] > tileSizes[1]:
+            self.tileSize = tileSizes[1]
+            self.pos = (PADDING[3] * (WIDTH - self.tileSize * self.dimensions[0]) / (PADDING[1] + PADDING[3]), PADDING[0])
+        else:
+            self.tileSize = tileSizes[3]
+            self.pos = (PADDING[3], PADDING[0] * (HEIGHT - self.tileSize * self.dimensions[0]) / (PADDING[0] + PADDING[2]))
+        self.shape = [[0 for _ in range(self.dimensions[0])] for _ in range(self.dimensions[1])]
+        self.states = [[16 for _ in range(self.dimensions[0])] for _ in range(self.dimensions[1])]
         self.tiles = [pygame.transform.scale(
             pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in reversed(range(16))]
+        self.car = Car(self.tileSize // 2, self)
     
     def import_shape(self, endoceString):
         number = 0
@@ -45,7 +56,6 @@ class Track:
 
         self.update_states()
 
-
     def export_shape(self):
         binary = ''.join(
             str(value)
@@ -56,7 +66,7 @@ class Track:
         number = int(binary, 2)
 
         if number == 0:
-            return '0'.zfill(ceil((self.dimensiotns[0] * self.dimensiotns[1]) / log2(len(BASE))))
+            return '0'.zfill(ceil((self.dimensions[0] * self.dimensions[1]) / log2(len(BASE))))
 
         endoceString = ''
 
@@ -64,11 +74,11 @@ class Track:
             number, remainder = divmod(number, len(BASE))
             endoceString = BASE[remainder] + endoceString
 
-        return endoceString.zfill(ceil((self.dimensiotns[0] * self.dimensiotns[1]) / log2(len(BASE))))
+        return endoceString.zfill(ceil((self.dimensions[0] * self.dimensions[1]) / log2(len(BASE))))
         
     def update_shape(self, pos):
         index = [
-            (pos[i] - self.pos[i]) // self.tileSize
+            int((pos[i] - self.pos[i]) // self.tileSize)
             for i in range(2)
         ]
         self.shape[index[1]][index[0]] += 1
@@ -81,26 +91,26 @@ class Track:
         # this is wrong im dumb
         # if x == 0 or self.shape[y][x - 1] == "01":
         #     around[3] = 1
-        # if x + 1 == self.dimensiotns[0] or self.shape[y][x + 1] == "01":
+        # if x + 1 == self.dimensions[0] or self.shape[y][x + 1] == "01":
         #     around[1] = 1
         # if y == 0  or self.shape[y - 1][x] == "01":
         #     around[0] = 1
-        # if y + 1 == self.dimensiotns[1] or self.shape[y + 1][x] == "01":
+        # if y + 1 == self.dimensions[1] or self.shape[y + 1][x] == "01":
         #     around[2] = 1
         if x == 0 or self.shape[y][x - 1] == 0:
             around[3] = 1
-        if x + 1 == self.dimensiotns[0] or self.shape[y][x + 1] == 0:
+        if x + 1 == self.dimensions[0] or self.shape[y][x + 1] == 0:
             around[1] = 1
         if y == 0  or self.shape[y - 1][x] == 0:
             around[0] = 1
-        if y + 1 == self.dimensiotns[1] or self.shape[y + 1][x] == 0:
+        if y + 1 == self.dimensions[1] or self.shape[y + 1][x] == 0:
             around[2] = 1
         return around
     
     def update_states(self):
-        self.states = [[16 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
-        for y in range(self.dimensiotns[1]):
-            for x in range(self.dimensiotns[0]):
+        self.states = [[16 for _ in range(self.dimensions[0])] for _ in range(self.dimensions[1])]
+        for y in range(self.dimensions[1]):
+            for x in range(self.dimensions[0]):
                 if self.shape[y][x] == 1:
                     around = self.get_around(x, y)
                     sum = 0
@@ -108,16 +118,16 @@ class Track:
                         sum += (2 ** i) * around[i]
                     self.states[y][x] = sum
 
-    def draw(self):
+    def draw(self, state):
         overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         pygame.draw.rect(
             overlay,
             (100, 100, 100, 50),
-            (self.pos[0] - 1, self.pos[1] - 1, self.tileSize * self.dimensiotns[0] + 2, self.tileSize * self.dimensiotns[1] + 2),
+            (self.pos[0] - 1, self.pos[1] - 1, self.tileSize * self.dimensions[0] + 2, self.tileSize * self.dimensions[1] + 2),
             1
         )
-        for y in range(self.dimensiotns[1]):
-            for x in range(self.dimensiotns[0]):
+        for y in range(self.dimensions[1]):
+            for x in range(self.dimensions[0]):
                 pygame.draw.rect(
                     overlay,
                     (100, 100, 100, 50),
@@ -128,10 +138,14 @@ class Track:
                     drawPos = (self.pos[0] + x * self.tileSize, self.pos[1] + y * self.tileSize)
                     self.surface.blit(self.tiles[self.states[y][x]], drawPos)
         self.surface.blit(overlay, (0, 0))
+        if state == 0:
+            self.car.calculate_movement()
+            self.car.draw(self.surface)
 
 
 class Car:
-    def __init__(self, size):
+    def __init__(self, size, track):
+        self.track = track
         self.movementKeys = [0, 0] # [1 = forward -1 = back, 1 = left -1 = right]
         self.movement = [0, 0]
         self.pos = pygame.Vector2(500, 500)
@@ -218,6 +232,14 @@ class Car:
         
         self.pos += forward * ammount
 
+    def calculate_slowdown(self, velocity):
+        index = [
+                    int((self.pos[i] - self.track.pos[i]) // self.track.tileSize)
+                    for i in range(2)
+                ]
+        value = 1 - self.track.shape[index[1]][index[0]]
+        return velocity - value * ((velocity) / moveSpeed)
+
     def calculate_velocity(self):
         timeMoving = time.time() - self.moveTime
         if self.movementKeys[0] ==  1:
@@ -229,7 +251,7 @@ class Car:
                 self.movement[0] -= friction
             elif self.movement[0] < 0:
                 self.movement[0] += friction
-        self.movement[0] = max(-moveSpeed, min(moveSpeed, self.movement[0]))
+        self.movement[0] = max(-moveSpeed, min(moveSpeed, self.calculate_slowdown(self.movement[0])))
 
     def get_key_inputs(self):
         keys = pygame.key.get_pressed()
