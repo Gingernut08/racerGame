@@ -1,6 +1,6 @@
 from imports import pygame, os
 from assets import Car
-from math import sin, cos, radians
+from math import sin, cos, radians, log2, ceil
 
 pygame.init()
 WIDTH = 1920
@@ -8,6 +8,7 @@ HEIGHT = 1080
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Car Colour Changer")
 
+BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`¬!\"£$%^&*()-=_+[]#;',./\\{}~:@<>?|"
 class track:
     def __init__(self, screen):
         self.surface = screen
@@ -19,10 +20,14 @@ class track:
         self.tiles = [pygame.transform.scale(
             pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in range(16)]
     
-    def import_shape(self, base36String):
-        binary = bin(int(base36String, 36))[2:]
+    def import_shape(self, endoceString):
+        number = 0
 
-        # Restore leading zeros removed by int()
+        for char in endoceString:
+            number = number * len(BASE) + BASE.index(char)
+
+        binary = bin(number)[2:]
+
         total_bits = len(self.shape) * len(self.shape[0])
         binary = binary.zfill(total_bits)
 
@@ -45,19 +50,16 @@ class track:
 
         number = int(binary, 2)
 
-        # Base 36
-        characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
         if number == 0:
-            return '0'
+            return '0'.zfill(ceil((self.dimensiotns[0] * self.dimensiotns[1]) / log2(len(BASE))))
 
-        base36String = ''
+        endoceString = ''
 
         while number:
-            number, remainder = divmod(number, 36)
-            base36String = characters[remainder] + base36String
+            number, remainder = divmod(number, len(BASE))
+            endoceString = BASE[remainder] + endoceString
 
-        return base36String
+        return endoceString.zfill(ceil((self.dimensiotns[0] * self.dimensiotns[1]) / log2(len(BASE))))
         
     def update_shape(self, pos):
         index = [
