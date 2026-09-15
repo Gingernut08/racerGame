@@ -18,7 +18,7 @@ class track:
         self.shape = [[0 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
         self.states = [[16 for _ in range(self.dimensiotns[0])] for _ in range(self.dimensiotns[1])]
         self.tiles = [pygame.transform.scale(
-            pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in range(16)]
+            pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in reversed(range(16))]
     
     def import_shape(self, endoceString):
         number = 0

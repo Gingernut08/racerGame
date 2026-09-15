@@ -1,7 +1,7 @@
 from imports import pygame, Image, os, time, sin, cos, radians
 
 
-scaler = 0.5
+scaler = 1
 turnSpeed = 4 * scaler
 moveSpeed = 10 * scaler
 acceleration = 0.2 * scaler
