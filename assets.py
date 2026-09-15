@@ -16,7 +16,17 @@ friction = 0.05
 endTurn = 1.5
 
 
-
+class HUD:
+    def __init__(self):
+        pos = [WIDTH - PADDING[1] + 20, HEIGHT - PADDING[2] + 20]
+        size = WIDTH - pos[0] - 20
+        self.vert = [pos[0], pos[1] - 2 * size - 20, size, 2 * size]
+        self.hori = [pos[0] - size, pos[1], 2 * size, size]
+        
+    
+    def draw(self, screen):
+        pygame.draw.rect(screen, (100, 100, 100), self.vert)
+        pygame.draw.rect(screen, (100, 100, 100), self.hori)
 
 
 class Track:
@@ -24,7 +34,6 @@ class Track:
         self.surface = screen
         self.dimensions = [18, 10]
         tileSizes = [(WIDTH - (PADDING[1] + PADDING[3])) // self.dimensions[0], (HEIGHT - (PADDING[0] + PADDING[1])) // self.dimensions[1]]
-        print(tileSizes)
         if tileSizes[0] > tileSizes[1]:
             self.tileSize = tileSizes[1]
             self.pos = (PADDING[3] * (WIDTH - self.tileSize * self.dimensions[0]) / (PADDING[1] + PADDING[3]), PADDING[0])
@@ -146,6 +155,7 @@ class Track:
 
 class Car:
     def __init__(self, size, track):
+        self.hud = HUD()
         self.track = track
         self.movementKeys = [0, 0] # [1 = forward -1 = back, 1 = left -1 = right]
         self.movement = [0, 0]
@@ -222,6 +232,7 @@ class Car:
         screen.blit(rotated_texture, texture_rect)
         if self.dotShown:
             pygame.draw.circle(screen, (255, 0, 0), self.pos, 5)
+        self.hud.draw(screen)
 
     def move_ammount(self, ammount):
         angle = radians(self.angle)
