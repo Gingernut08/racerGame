@@ -6,7 +6,7 @@ WIDTH, HEIGHT = 1920, 1080
 BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`¬!\"£$%^&*()-=_+[]#;',./\\{}~:@<>?|"
 
 
-PADDING = [100, 200, 300, 400]
+PADDING = [100, 200, 200, 100]
 
 turnSpeed = 6
 moveSpeed = 15
@@ -23,13 +23,14 @@ class Track:
     def __init__(self, screen):
         self.surface = screen
         self.dimensions = [18, 10]
-        tileSizes = [(WIDTH - (PADDING[1] + PADDING[3])) // self.dimensions[0], (HEIGHT -  - (PADDING[0] + PADDING[1])) // self.dimensions[1]]
+        tileSizes = [(WIDTH - (PADDING[1] + PADDING[3])) // self.dimensions[0], (HEIGHT - (PADDING[0] + PADDING[1])) // self.dimensions[1]]
+        print(tileSizes)
         if tileSizes[0] > tileSizes[1]:
             self.tileSize = tileSizes[1]
             self.pos = (PADDING[3] * (WIDTH - self.tileSize * self.dimensions[0]) / (PADDING[1] + PADDING[3]), PADDING[0])
         else:
-            self.tileSize = tileSizes[3]
-            self.pos = (PADDING[3], PADDING[0] * (HEIGHT - self.tileSize * self.dimensions[0]) / (PADDING[0] + PADDING[2]))
+            self.tileSize = tileSizes[0]
+            self.pos = (PADDING[3], PADDING[0] * (HEIGHT - self.tileSize * self.dimensions[1]) / (PADDING[0] + PADDING[2]))
         self.shape = [[0 for _ in range(self.dimensions[0])] for _ in range(self.dimensions[1])]
         self.states = [[16 for _ in range(self.dimensions[0])] for _ in range(self.dimensions[1])]
         self.tiles = [pygame.transform.scale(
