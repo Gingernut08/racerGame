@@ -44,7 +44,6 @@ while running:
             if state == 1:
                 trackOne.update_shape(pygame.mouse.get_pos())
     
-    
     # Draw to display
     screen.fill(bgColor)
     
@@ -55,10 +54,9 @@ while running:
     
     if state == 1:
         trackOne.draw()
-        
+        # Draw Mouse
+        screen.blit(cursor, pygame.mouse.get_pos())
     
-    # Draw Mouse
-    screen.blit(cursor, pygame.mouse.get_pos())
     
     # update display
     pygame.display.flip()

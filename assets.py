@@ -1,4 +1,4 @@
-from imports import pygame, Image, os, time, sin, cos, radians, log2, ceil
+from imports import pygame, Image, os, time, sin, cos, radians, log2, ceil, pi, hypot
 
 WIDTH, HEIGHT = 1920, 1080
 
@@ -7,11 +7,12 @@ BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`¬!\"£$%
 
 
 scaler = 1
-turnSpeed = 4 * scaler
+turnSpeed = 6 * scaler
 moveSpeed = 10 * scaler
 acceleration = 0.2 * scaler
 reverseAcceleration = 0.2 * scaler
 friction = 0.05 * scaler
+endTurn = 1.5 * scaler
 
 class Track:
     def __init__(self, screen):
@@ -258,6 +259,16 @@ class Car:
             self.pivotNum += 1
             self.pivotNum %= 2
 
+    def getTurnAmount(self, velocity):
+        speed = hypot(*velocity)
+        
+
+        x = min(speed / moveSpeed, 1)
+
+        rise = sin((x ** 1.5) * pi / 2)
+
+        return turnSpeed * rise - (turnSpeed - endTurn) * x**4
+
     def calculate_movement(self):
         
         angle = radians(self.angle)
@@ -269,7 +280,11 @@ class Car:
         )
         
         self.get_key_inputs()
-        self.angle += self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * turnSpeed
+        self.angle += (
+            self.movementKeys[1]
+            * (1 if self.movement[0] >= 0 else -1)
+            * self.getTurnAmount(self.movement)
+        )
         
         self.calculate_velocity()
         self.move_ammount(self.movement[0])
