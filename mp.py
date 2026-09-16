@@ -22,6 +22,10 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 running = False
     go.append((carx+10,cary+5))
+    carx+=3
+    #vroom Time 
+    if len(go)>1:
+        pygame.draw.lines(screen,(255,255,255),False,go,8)
     screen.blit(bg, (0,0))         
     screen.blit(car, (carx, cary))
     pygame.display.flip()
@@ -29,6 +33,4 @@ while running:
 pygame.quit()
 #bgdoneee
 
-#vroom Time 
-if len(go)>1:
-    pygame.draw.lines(screen,(255,255,255),False,go,8)
+
