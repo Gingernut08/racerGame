@@ -26,9 +26,9 @@ while running:
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
-//bgdoneee
+#bgdoneee
 
-//vroom Time 
+#vroom Time 
 go=[]
 go.append((carx+10,cary+5))
 if len(go)<1:
