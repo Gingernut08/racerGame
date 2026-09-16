@@ -8,13 +8,14 @@ BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`¬!\"£$%
 
 PADDING = [100, 200, 200, 100]
 
-turnSpeed = 6
-moveSpeed = 15
+turnSpeed = 3
+moveSpeed = 12
 acceleration = 0.2
 reverseAcceleration = 0.2
 friction = 0.05
 endTurn = 1.5
 hudPadding = [10, 20]
+bestTurnSpeed = 8
 
 
 class HUD:
@@ -276,7 +277,7 @@ class Car:
         self.pos += forward * ammount
 
     def calculate_slowdown(self, velocity):
-        value = 0
+        value = 1.5
         # if not all([self.pos[i] < self.track.pos[i] and self.pos[i] > self.pos[i] + self.track.dimensions[i] * self.track.tileSize for i in range(2)]):
         index = [
                     int((self.pos[i] - self.track.pos[i]) // self.track.tileSize)
@@ -306,9 +307,9 @@ class Car:
         self.movementKeys[0] = 0
         self.movementKeys[1] = 0
 
-        if keys[pygame.K_w]:
+        if keys[pygame.K_RIGHT]:
             self.movementKeys[0] += 1
-        if keys[pygame.K_s]:
+        if keys[pygame.K_LEFT]:
             self.movementKeys[0] -= 1
 
         if keys[pygame.K_a]:
@@ -331,11 +332,11 @@ class Car:
         speed = hypot(*velocity)
         
 
-        x = min(speed / moveSpeed, 1)
-
-        rise = sin((x ** 1.5) * pi / 2)
-
-        return turnSpeed * rise - (turnSpeed - endTurn) * x**4
+        if speed <= bestTurnSpeed:
+            x = speed / bestTurnSpeed
+            return turnSpeed * sin((x ** 1.5 * pi / 2))
+        x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
+        return turnSpeed - (turnSpeed - endTurn) * x ** 4
 
     def calculate_movement(self):
         
