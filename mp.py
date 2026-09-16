@@ -1,9 +1,9 @@
 import pygame
 pygame.init()
-WIDTH = 1920
-HEIGHT = 1080
-screen=pygame.display.set_mode((WIDTH,HEIGHT), pygame.FULLSCREEN)
+screen=pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+(WIDTH,HEIGHT)=screen.get_size()
 pygame.display.set_caption("intro")
+
 clock=pygame.time.Clock()
 bg=pygame.image.load("Textures/Untitled design (20).png")
 bg = pygame.transform.rotate(bg, 90)
