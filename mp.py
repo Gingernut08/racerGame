@@ -10,8 +10,8 @@ bg = pygame.transform.rotate(bg, 90)
 bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
 car = pygame.image.load("Textures/car/RGBBlackCar.png").convert_alpha()
 car=pygame.transform.scale(car,(50,50))
-carx=300
-cary=500
+carx=400
+cary=200 #bottom=450 top=200
 running=True
 go=[]
 while running:
@@ -22,10 +22,9 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 running = False
     go.append((carx+10,cary+5))
-    carx+=3
     #vroom Time 
     if len(go)>1:
-        pygame.draw.lines(screen,(255,255,255),False,go,8)
+        pygame.draw.circle(screen, (255, 0, 0), (500, 500), 20)
     screen.blit(bg, (0,0))         
     screen.blit(car, (carx, cary))
     pygame.display.flip()
