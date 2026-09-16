@@ -31,5 +31,5 @@ pygame.quit()
 #vroom Time 
 go=[]
 go.append((carx+10,cary+5))
-if len(go)<1:
+if len(go)>1:
     pygame.draw.lines(screen,(255,255,255),False,go,8)
