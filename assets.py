@@ -276,11 +276,14 @@ class Car:
         self.pos += forward * ammount
 
     def calculate_slowdown(self, velocity):
+        value = 0
+        # if not all([self.pos[i] < self.track.pos[i] and self.pos[i] > self.pos[i] + self.track.dimensions[i] * self.track.tileSize for i in range(2)]):
         index = [
                     int((self.pos[i] - self.track.pos[i]) // self.track.tileSize)
                     for i in range(2)
                 ]
-        value = 1 - self.track.shape[index[1]][index[0]]
+        if all([self.track.pos[i] < self.pos[i] and self.pos[i] < self.track.pos[i] + self.track.tileSize * self.track.dimensions[i] for i in range(2)]):
+            value = 1 - self.track.shape[index[1]][index[0]]
         return velocity - value * ((velocity) / moveSpeed)
 
     def calculate_velocity(self):
