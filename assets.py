@@ -14,19 +14,50 @@ acceleration = 0.2
 reverseAcceleration = 0.2
 friction = 0.05
 endTurn = 1.5
+hudPadding = [10, 20]
 
 
 class HUD:
-    def __init__(self):
+    def __init__(self, car):
         pos = [WIDTH - PADDING[1] + 20, HEIGHT - PADDING[2] + 20]
-        size = WIDTH - pos[0] - 20
-        self.vert = [pos[0], pos[1] - 2 * size - 20, size, 2 * size]
-        self.hori = [pos[0] - size, pos[1], 2 * size, size]
-        
+        self.size = WIDTH - pos[0] - 20
+        self.vert = [pos[0], pos[1] - 2 * self.size - 20, self.size, 2 * self.size]
+        self.hori = [pos[0] - self.size, pos[1], 2 * self.size, self.size]
+        self.values = [0, 0]
+        self.car = car
     
     def draw(self, screen):
         pygame.draw.rect(screen, (100, 100, 100), self.vert)
         pygame.draw.rect(screen, (100, 100, 100), self.hori)
+        
+        if self.values[1] != 0:
+            self.values[0] *= self.values[1] / abs(self.values[1])
+        pygame.draw.rect(screen, (100, 200, 100), (
+                                                    min(self.hori[0] + self.size - self.values[0] * (self.size - hudPadding[1]), self.hori[0] + self.size), 
+                                                    self.hori[1] + hudPadding[0],
+                                                    abs(self.values[0]) * (self.size - hudPadding[1]),
+                                                    self.hori[3] - (2 * hudPadding[0])
+                                                    ))
+        pygame.draw.rect(screen, (100, 200, 100), (
+                                                    self.vert[0] + hudPadding[0],
+                                                    min(self.vert[1] + self.size - self.values[1] * (self.size - hudPadding[1]), self.vert[1] + self.size),
+                                                    self.vert[2] - (2 * hudPadding[0]),
+                                                    abs(self.values[1]) * (self.size - hudPadding[1])
+                                                    ))
+        if self.car.movementKeys[0] != 0:
+            pygame.draw.rect(screen, (200, 200, 200), (
+                                                        self.vert[0] + hudPadding[1] // 2,
+                                                        self.vert[1] + self.size - (self.size - hudPadding[1] // 2) * self.car.movementKeys[0] - hudPadding[1] // 4,
+                                                        self.vert[2] - 2 * hudPadding[0],
+                                                        hudPadding[1] // 2
+                                                        ))
+        if self.car.movementKeys[1] != 0:
+            pygame.draw.rect(screen, (200, 200, 200), (
+                                                        self.hori[0] + self.size - (self.size - hudPadding[1] // 2) * self.car.movementKeys[1] - hudPadding[1] // 4,
+                                                        self.hori[1] + hudPadding[1] // 2,
+                                                        hudPadding[1] // 2,
+                                                        self.hori[3] - 2 * hudPadding[0]
+                                                        ))
 
 
 class Track:
@@ -155,7 +186,7 @@ class Track:
 
 class Car:
     def __init__(self, size, track):
-        self.hud = HUD()
+        self.hud = HUD(self)
         self.track = track
         self.movementKeys = [0, 0] # [1 = forward -1 = back, 1 = left -1 = right]
         self.movement = [0, 0]
@@ -165,9 +196,9 @@ class Car:
         self.colorOne = (255, 255, 0)
         self.colorTwo = (0, 255, 255)
         self.colorThree = (255, 0, 255)
-        self.imageFile = os.path.join("Textures", "RGBBlackCar.png")
+        self.imageFile = os.path.join("Textures", "car", "RGBBlackCar.png")
         self.texture = pygame.transform.scale(
-            pygame.image.load(os.path.join("Textures", "CarTexture.png")).convert_alpha(),
+            pygame.image.load(os.path.join("Textures", "car", "CarTexture.png")).convert_alpha(),
             (self.size, self.size))
         self.change_colors()
         self.turnTime = time.time()
@@ -314,12 +345,11 @@ class Car:
         )
         
         self.get_key_inputs()
-        self.angle += (
-            self.movementKeys[1]
-            * (1 if self.movement[0] >= 0 else -1)
-            * self.getTurnAmount(self.movement)
-        )
+        angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement)
+        self.angle += angleChange
         
         self.calculate_velocity()
         self.move_ammount(self.movement[0])
+        
+        self.hud.values = [angleChange / turnSpeed, self.movement[0] / moveSpeed]
         # self.pos += forward * self.movementKeys[0] * moveSpeed
