@@ -19,14 +19,29 @@ endTurn = 1.5
 class HUD:
     def __init__(self):
         pos = [WIDTH - PADDING[1] + 20, HEIGHT - PADDING[2] + 20]
-        size = WIDTH - pos[0] - 20
-        self.vert = [pos[0], pos[1] - 2 * size - 20, size, 2 * size]
-        self.hori = [pos[0] - size, pos[1], 2 * size, size]
-        
+        self.size = WIDTH - pos[0] - 20
+        self.vert = [pos[0], pos[1] - 2 * self.size - 20, self.size, 2 * self.size]
+        self.hori = [pos[0] - self.size, pos[1], 2 * self.size, self.size]
+        self.values = [0, 0]
     
     def draw(self, screen):
         pygame.draw.rect(screen, (100, 100, 100), self.vert)
         pygame.draw.rect(screen, (100, 100, 100), self.hori)
+        
+        if self.values[1] != 0:
+            self.values[0] *= self.values[1] / abs(self.values[1])
+        pygame.draw.rect(screen, (100, 200, 100), (
+                                                    min(self.hori[0] + self.size - self.values[0] * self.size, self.hori[0] + self.size), 
+                                                    self.hori[1] + 10,
+                                                    abs(self.values[0]) * self.size,
+                                                    self.hori[3] - 20
+                                                    ))
+        pygame.draw.rect(screen, (100, 200, 100), (
+                                                    self.vert[0] + 10,
+                                                    min(self.vert[1] + self.size - self.values[1] * self.size, self.vert[1] + self.size),
+                                                    self.vert[2] - 20,
+                                                    abs(self.values[1]) * self.size
+                                                    ))
 
 
 class Track:
@@ -314,12 +329,11 @@ class Car:
         )
         
         self.get_key_inputs()
-        self.angle += (
-            self.movementKeys[1]
-            * (1 if self.movement[0] >= 0 else -1)
-            * self.getTurnAmount(self.movement)
-        )
+        angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement)
+        self.angle += angleChange
         
         self.calculate_velocity()
         self.move_ammount(self.movement[0])
+        
+        self.hud.values = [angleChange / turnSpeed, self.movement[0] / moveSpeed]
         # self.pos += forward * self.movementKeys[0] * moveSpeed
