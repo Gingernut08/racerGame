@@ -165,9 +165,9 @@ class Car:
         self.colorOne = (255, 255, 0)
         self.colorTwo = (0, 255, 255)
         self.colorThree = (255, 0, 255)
-        self.imageFile = os.path.join("Textures", "RGBBlackCar.png")
+        self.imageFile = os.path.join("Textures", "car", "RGBBlackCar.png")
         self.texture = pygame.transform.scale(
-            pygame.image.load(os.path.join("Textures", "CarTexture.png")).convert_alpha(),
+            pygame.image.load(os.path.join("Textures", "car", "CarTexture.png")).convert_alpha(),
             (self.size, self.size))
         self.change_colors()
         self.turnTime = time.time()
