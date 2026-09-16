@@ -13,6 +13,7 @@ car=pygame.transform.scale(car,(50,50))
 carx=300
 cary=500
 running=True
+go=[]
 while running:
     for event in pygame.event.get():
         if event.type ==pygame.QUIT:
@@ -20,7 +21,7 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-
+    go.append((carx+10,cary+5))
     screen.blit(bg, (0,0))         
     screen.blit(car, (carx, cary))
     pygame.display.flip()
@@ -29,7 +30,5 @@ pygame.quit()
 #bgdoneee
 
 #vroom Time 
-go=[]
-go.append((carx+10,cary+5))
 if len(go)>1:
     pygame.draw.lines(screen,(255,255,255),False,go,8)
