@@ -19,6 +19,11 @@ bgColor = (150, 200, 150)
 
 state = 0
 
+with open(os.path.join("Saves", "tracks" + ".txt"), "r") as file:
+    trackValues = [line.strip() for line in file]
+trackValues.insert(0, "0000000000000000000000000000")
+trackIndex = 0
+
 
 while running:
     # Get all events
@@ -35,9 +40,15 @@ while running:
                 state += 1
                 state %= 2
             if event.key == pygame.K_e:
-                copy(trackOne.export_shape())
+                text = trackOne.export_shape()
+                with open(os.path.join("Saves", "tracks" + ".txt"), "a") as file:
+                    file.write(text + "\n")
+                trackValues.append(text)
+                copy(text)
             if event.key == pygame.K_i:
-                trackOne.import_shape(input())
+                trackIndex += 1
+                trackIndex %= len(trackValues)
+                trackOne.import_shape(trackValues[trackIndex])
         if event.type == pygame.MOUSEBUTTONDOWN:
             if state == 1:
                 trackOne.update_shape(pygame.mouse.get_pos())
