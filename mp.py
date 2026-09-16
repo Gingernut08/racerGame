@@ -5,7 +5,7 @@ screen=pygame.display.set_mode((0,0),pygame.FULLSCREEN)
 pygame.display.set_caption("intro")
 
 clock=pygame.time.Clock()
-bg=pygame.image.load("Textures/Untitled design (20).png")
+bg=pygame.image.load("Textures/Untitled design (26).png")
 bg = pygame.transform.rotate(bg, 90)
 bg = pygame.transform.scale(bg, (WIDTH, HEIGHT))
 car = pygame.image.load("Textures/RGBBlackCar.png").convert_alpha()
@@ -26,3 +26,4 @@ while running:
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
+//bgdoneee
