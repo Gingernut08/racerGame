@@ -24,12 +24,17 @@ class HUD:
         self.size = WIDTH - pos[0] - 20
         self.vert = [pos[0], pos[1] - 2 * self.size - 20, self.size, 2 * self.size]
         self.hori = [pos[0] - self.size, pos[1], 2 * self.size, self.size]
-        self.values = [0, 0]
+        self.speed = [pos[0], self.vert[1] - self.size - 20, self.size, self.size]
+        self.speedDial = [self.speed[0] + self.size // 2, self.speed[1] + self.size // 2, self.size // 2 - 10]
+        self.values = [0, 0, 0]
         self.car = car
     
     def draw(self, screen):
         pygame.draw.rect(screen, (100, 100, 100), self.vert)
         pygame.draw.rect(screen, (100, 100, 100), self.hori)
+        pygame.draw.rect(screen, (100, 100, 100), self.speed)
+        pygame.draw.circle(screen, (150, 150, 150), self.speedDial[:2], self.speedDial[2])
+        print(self.values[2])
         
         if self.values[1] != 0:
             self.values[0] *= self.values[1] / abs(self.values[1])
@@ -328,10 +333,8 @@ class Car:
             self.pivotNum += 1
             self.pivotNum %= 2
 
-    def getTurnAmount(self, velocity):
-        speed = hypot(*velocity)
-        
-
+    def getTurnAmount(self, speed):
+        speed = abs(speed)
         if speed <= bestTurnSpeed:
             x = speed / bestTurnSpeed
             return turnSpeed * sin((x ** 1.5 * pi / 2))
@@ -349,11 +352,11 @@ class Car:
         )
         
         self.get_key_inputs()
-        angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement)
+        angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement[0])
         self.angle += angleChange
         
         self.calculate_velocity()
         self.move_ammount(self.movement[0])
         
-        self.hud.values = [angleChange / turnSpeed, self.movement[0] / moveSpeed]
+        self.hud.values = [angleChange / turnSpeed, self.movement[0] / moveSpeed, self.movement[0]]
         # self.pos += forward * self.movementKeys[0] * moveSpeed
