@@ -29,12 +29,82 @@ class HUD:
         self.values = [0, 0, 0]
         self.car = car
     
+    def drawNumber(self, screen, pos, size, value):
+        num = 99 * value
+
+        segmentWidth = 2 * size / 30
+        segmentHeight = (size - segmentWidth) // 2
+
+        # Negative values are red
+        colour = (200, 0, 0) if num < -0.5 else (255, 255, 255)
+
+        segment = pygame.Surface(
+            (segmentWidth, segmentHeight),
+            pygame.SRCALPHA
+        )
+
+        pygame.draw.polygon(
+            segment,
+            colour,
+            (
+                ((segmentWidth - 1) // 2, 0),
+                (segmentWidth - 1, (segmentWidth - 1) // 2),
+                (segmentWidth - 1, segmentHeight - 1 - (segmentWidth - 1) // 2),
+                ((segmentWidth - 1) // 2, segmentHeight - 1),
+                (0, segmentHeight - 1 - (segmentWidth - 1) // 2),
+                (0, (segmentWidth - 1) // 2)
+            )
+        )
+
+        horizontal = pygame.transform.rotate(segment, -90)
+
+        segments = {
+            0: "abcdef",
+            1: "bc",
+            2: "abdeg",
+            3: "abcdg",
+            4: "bcfg",
+            5: "acdfg",
+            6: "acdefg",
+            7: "abc",
+            8: "abcdefg",
+            9: "abcdfg"
+        }
+
+        def drawDigit(x, digit):
+            halfWidth = (segmentHeight - segmentWidth) / 2
+
+            positions = {
+                "a": (x, pos[1] - 2 * halfWidth),
+                "b": (x + halfWidth + segmentWidth / 2, pos[1] - halfWidth),
+                "c": (x + halfWidth + segmentWidth / 2, pos[1] + halfWidth),
+                "d": (x, pos[1] + 2 * halfWidth),
+                "e": (x - halfWidth - segmentWidth / 2, pos[1] + halfWidth),
+                "f": (x - halfWidth - segmentWidth / 2, pos[1] - halfWidth),
+                "g": (x, pos[1])
+            }
+
+            for name in segments[digit]:
+                part = horizontal if name in "adg" else segment
+                rect = part.get_rect(center=positions[name])
+                screen.blit(part, rect)
+
+        num = max(0, min(99, int(abs(num))))
+
+        tens = num // 10
+        ones = num % 10
+
+        digitSpacing = size * 0.75
+
+        drawDigit(pos[0] - digitSpacing / 2, tens)
+        drawDigit(pos[0] + digitSpacing / 2, ones)
+    
     def draw(self, screen):
         pygame.draw.rect(screen, (100, 100, 100), self.vert)
         pygame.draw.rect(screen, (100, 100, 100), self.hori)
         pygame.draw.rect(screen, (100, 100, 100), self.speed)
         pygame.draw.circle(screen, (150, 150, 150), self.speedDial[:2], self.speedDial[2])
-        print(self.values[2])
+        self.drawNumber(screen, self.speedDial[:2], self.speedDial[2], self.values[1])
         
         if self.values[1] != 0:
             self.values[0] *= self.values[1] / abs(self.values[1])
