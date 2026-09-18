@@ -26,17 +26,24 @@ class HUD:
         self.hori = [pos[0] - self.size, pos[1], 2 * self.size, self.size]
         self.speed = [pos[0], self.vert[1] - self.size - 20, self.size, self.size]
         self.speedDial = [self.speed[0] + self.size // 2, self.speed[1] + self.size // 2, self.size // 2 - 10]
-        self.values = [0, 0, 0]
+        self.values = [0, 0]
         self.car = car
+        self.speedo = 0
+        self.speedoUpdateTime = 0.5
+        self.updateSpeedo = time.time() - self.speedoUpdateTime
+        self.arcStartTime = time.time()
+        self.arcDuration = self.speedoUpdateTime * 2
     
     def drawNumber(self, screen, pos, size, value):
-        num = 99 * value
+        if time.time() - self.updateSpeedo > self.speedoUpdateTime:
+            self.speedo = 99 * value
+            self.updateSpeedo = time.time()
 
         segmentWidth = 2 * size / 30
         segmentHeight = (size - segmentWidth) // 2
 
         # Negative values are red
-        colour = (200, 0, 0) if num < -0.5 else (255, 255, 255)
+        colour = (200, 0, 0) if self.speedo < -0.5 else (255, 255, 255)
 
         segment = pygame.Surface(
             (segmentWidth, segmentHeight),
@@ -89,7 +96,7 @@ class HUD:
                 rect = part.get_rect(center=positions[name])
                 screen.blit(part, rect)
 
-        num = max(0, min(99, int(abs(num))))
+        num = max(0, min(99, int(abs(self.speedo))))
 
         tens = num // 10
         ones = num % 10
@@ -103,7 +110,44 @@ class HUD:
         pygame.draw.rect(screen, (100, 100, 100), self.vert)
         pygame.draw.rect(screen, (100, 100, 100), self.hori)
         pygame.draw.rect(screen, (100, 100, 100), self.speed)
+
         pygame.draw.circle(screen, (150, 150, 150), self.speedDial[:2], self.speedDial[2])
+        
+        progress = (time.time() - self.arcStartTime) / self.arcDuration
+
+        if progress >= 1:
+            self.arcStartTime = time.time()
+            progress = 0
+        progress *= 2
+
+        pygame.draw.arc(
+            screen,
+            (150, 175, 150),
+            (
+                self.speedDial[0] - self.speedDial[2],
+                self.speedDial[1] - self.speedDial[2],
+                self.speedDial[2] * 2,
+                self.speedDial[2] * 2
+            ),
+            0.5 * pi - 2 * pi * min(progress, 1),
+            0.5 * pi,
+            2
+        )
+        if progress >= 1:
+            pygame.draw.arc(
+                screen,
+                (150, 150, 150),
+                (
+                    self.speedDial[0] - self.speedDial[2],
+                    self.speedDial[1] - self.speedDial[2],
+                    self.speedDial[2] * 2,
+                    self.speedDial[2] * 2
+                ),
+                0.5 * pi - 2 * pi * (max(progress, 1) - 1),
+                0.5 * pi,
+                2
+            )
+
         self.drawNumber(screen, self.speedDial[:2], self.speedDial[2], self.values[1])
         
         if self.values[1] != 0:
@@ -428,5 +472,5 @@ class Car:
         self.calculate_velocity()
         self.move_ammount(self.movement[0])
         
-        self.hud.values = [angleChange / turnSpeed, self.movement[0] / moveSpeed, self.movement[0]]
+        self.hud.values = [angleChange / turnSpeed, self.movement[0] / moveSpeed]
         # self.pos += forward * self.movementKeys[0] * moveSpeed
