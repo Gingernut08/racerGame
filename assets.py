@@ -29,7 +29,7 @@ class HUD:
         self.values = [0, 0]
         self.car = car
         self.speedo = 0
-        self.speedoUpdateTime = 0.5
+        self.speedoUpdateTime = 0.25
         self.updateSpeedo = time.time() - self.speedoUpdateTime
         self.arcStartTime = time.time()
         self.arcDuration = self.speedoUpdateTime * 2
