@@ -26,9 +26,10 @@ while running:
     #vroom Time 
     carx+=3
     screen.blit(bg, (0,0))         
-    screen.blit(car, (carx, cary))
+    
     if len(go)>1:
-        pygame.draw.circle(screen, (255, 0, 0), (500, 500), 20)
+        pygame.draw.lines(screen,(255,0,1),False,go,10)
+    screen.blit(car, (carx, cary))
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
