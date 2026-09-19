@@ -22,7 +22,7 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
-    go.append((carx+10,cary+5))
+    go.append((carx+10,cary+25))
     #vroom Time 
     carx+=3
     screen.blit(bg, (0,0))         
