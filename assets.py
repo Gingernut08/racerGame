@@ -8,13 +8,14 @@ BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`¬!\"£$%
 
 PADDING = [100, 200, 200, 100]
 
-turnSpeed = 6
-moveSpeed = 15
+turnSpeed = 3
+moveSpeed = 12
 acceleration = 0.2
 reverseAcceleration = 0.2
 friction = 0.05
 endTurn = 1.5
 hudPadding = [10, 20]
+bestTurnSpeed = 8
 
 
 class HUD:
@@ -23,12 +24,131 @@ class HUD:
         self.size = WIDTH - pos[0] - 20
         self.vert = [pos[0], pos[1] - 2 * self.size - 20, self.size, 2 * self.size]
         self.hori = [pos[0] - self.size, pos[1], 2 * self.size, self.size]
+        self.speed = [pos[0], self.vert[1] - self.size - 20, self.size, self.size]
+        self.speedDial = [self.speed[0] + self.size // 2, self.speed[1] + self.size // 2, self.size // 2 - 10]
         self.values = [0, 0]
         self.car = car
+        self.speedo = 0
+        self.speedoUpdateTime = 0.25
+        self.updateSpeedo = time.time() - self.speedoUpdateTime
+        self.arcStartTime = time.time()
+        self.arcDuration = self.speedoUpdateTime * 2
+    
+    def drawNumber(self, screen, pos, size, value):
+        if time.time() - self.updateSpeedo > self.speedoUpdateTime:
+            self.speedo = 99 * value
+            self.updateSpeedo = time.time()
+
+        segmentWidth = 2 * size / 30
+        segmentHeight = (size - segmentWidth) // 2
+
+        # Negative values are red
+        colour = (200, 0, 0) if self.speedo < -0.5 else (255, 255, 255)
+
+        segment = pygame.Surface(
+            (segmentWidth, segmentHeight),
+            pygame.SRCALPHA
+        )
+
+        pygame.draw.polygon(
+            segment,
+            colour,
+            (
+                ((segmentWidth - 1) // 2, 0),
+                (segmentWidth - 1, (segmentWidth - 1) // 2),
+                (segmentWidth - 1, segmentHeight - 1 - (segmentWidth - 1) // 2),
+                ((segmentWidth - 1) // 2, segmentHeight - 1),
+                (0, segmentHeight - 1 - (segmentWidth - 1) // 2),
+                (0, (segmentWidth - 1) // 2)
+            )
+        )
+
+        horizontal = pygame.transform.rotate(segment, -90)
+
+        segments = {
+            0: "abcdef",
+            1: "bc",
+            2: "abdeg",
+            3: "abcdg",
+            4: "bcfg",
+            5: "acdfg",
+            6: "acdefg",
+            7: "abc",
+            8: "abcdefg",
+            9: "abcdfg"
+        }
+
+        def drawDigit(x, digit):
+            halfWidth = (segmentHeight - segmentWidth) / 2
+
+            positions = {
+                "a": (x, pos[1] - 2 * halfWidth),
+                "b": (x + halfWidth + segmentWidth / 2, pos[1] - halfWidth),
+                "c": (x + halfWidth + segmentWidth / 2, pos[1] + halfWidth),
+                "d": (x, pos[1] + 2 * halfWidth),
+                "e": (x - halfWidth - segmentWidth / 2, pos[1] + halfWidth),
+                "f": (x - halfWidth - segmentWidth / 2, pos[1] - halfWidth),
+                "g": (x, pos[1])
+            }
+
+            for name in segments[digit]:
+                part = horizontal if name in "adg" else segment
+                rect = part.get_rect(center=positions[name])
+                screen.blit(part, rect)
+
+        num = max(0, min(99, int(abs(self.speedo))))
+
+        tens = num // 10
+        ones = num % 10
+
+        digitSpacing = size * 0.75
+
+        drawDigit(pos[0] - digitSpacing / 2, tens)
+        drawDigit(pos[0] + digitSpacing / 2, ones)
     
     def draw(self, screen):
         pygame.draw.rect(screen, (100, 100, 100), self.vert)
         pygame.draw.rect(screen, (100, 100, 100), self.hori)
+        pygame.draw.rect(screen, (100, 100, 100), self.speed)
+
+        pygame.draw.circle(screen, (150, 150, 150), self.speedDial[:2], self.speedDial[2])
+        
+        progress = (time.time() - self.arcStartTime) / self.arcDuration
+
+        if progress >= 1:
+            self.arcStartTime = time.time()
+            progress = 0
+        progress *= 2
+
+        pygame.draw.arc(
+            screen,
+            (150, 175, 150),
+            (
+                self.speedDial[0] - self.speedDial[2],
+                self.speedDial[1] - self.speedDial[2],
+                self.speedDial[2] * 2,
+                self.speedDial[2] * 2
+            ),
+            0.5 * pi - 2 * pi * min(progress, 1),
+            0.5 * pi,
+            2
+        )
+        if progress >= 1:
+            pygame.draw.arc(
+                screen,
+                (150, 150, 150),
+                (
+                    self.speedDial[0] - self.speedDial[2],
+                    self.speedDial[1] - self.speedDial[2],
+                    self.speedDial[2] * 2,
+                    self.speedDial[2] * 2
+                ),
+                0.5 * pi - 2 * pi * (max(progress, 1) - 1),
+                0.5 * pi,
+                2
+            )
+
+        self.drawNumber(screen, self.speedDial[:2], self.speedDial[2], self.values[1])
         
         if self.values[1] != 0:
             self.values[0] *= self.values[1] / abs(self.values[1])
@@ -276,11 +396,14 @@ class Car:
         self.pos += forward * ammount
 
     def calculate_slowdown(self, velocity):
+        value = 1.5
+        # if not all([self.pos[i] < self.track.pos[i] and self.pos[i] > self.pos[i] + self.track.dimensions[i] * self.track.tileSize for i in range(2)]):
         index = [
                     int((self.pos[i] - self.track.pos[i]) // self.track.tileSize)
                     for i in range(2)
                 ]
-        value = 1 - self.track.shape[index[1]][index[0]]
+        if all([self.track.pos[i] < self.pos[i] and self.pos[i] < self.track.pos[i] + self.track.tileSize * self.track.dimensions[i] for i in range(2)]):
+            value = 1 - self.track.shape[index[1]][index[0]]
         return velocity - value * ((velocity) / moveSpeed)
 
     def calculate_velocity(self):
@@ -303,9 +426,9 @@ class Car:
         self.movementKeys[0] = 0
         self.movementKeys[1] = 0
 
-        if keys[pygame.K_w]:
+        if keys[pygame.K_RIGHT]:
             self.movementKeys[0] += 1
-        if keys[pygame.K_s]:
+        if keys[pygame.K_LEFT]:
             self.movementKeys[0] -= 1
 
         if keys[pygame.K_a]:
@@ -324,15 +447,13 @@ class Car:
             self.pivotNum += 1
             self.pivotNum %= 2
 
-    def getTurnAmount(self, velocity):
-        speed = hypot(*velocity)
-        
-
-        x = min(speed / moveSpeed, 1)
-
-        rise = sin((x ** 1.5) * pi / 2)
-
-        return turnSpeed * rise - (turnSpeed - endTurn) * x**4
+    def getTurnAmount(self, speed):
+        speed = abs(speed)
+        if speed <= bestTurnSpeed:
+            x = speed / bestTurnSpeed
+            return turnSpeed * sin((x ** 1.5 * pi / 2))
+        x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
+        return turnSpeed - (turnSpeed - endTurn) * x ** 4
 
     def calculate_movement(self):
         
@@ -345,7 +466,7 @@ class Car:
         )
         
         self.get_key_inputs()
-        angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement)
+        angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement[0])
         self.angle += angleChange
         
         self.calculate_velocity()
