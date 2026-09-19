@@ -5,8 +5,9 @@
 }
 
 body{
-    background-color: #416036;
+    background-color: #48643b;
     color: #d5dad3;
+    cursor: url(Textures/ue\ \(1\).png),auto;
 }
 #bg{
     height: auto;
@@ -30,4 +31,31 @@ h1{
     display: contents;
     justify-content: center;
     align-items: center;
+}
+button{
+    border: #a35021 solid 2px;
+    border-radius: 7px;
+    background-color: #d5dad3;
+    color: #252525;
+    font-family: "Silkscreen", sans-serif;
+    font-size: large;
+    display: flex;
+    align-items: center;   
+    justify-content: center;
+    justify-self: center;
+    transform: translateY(-480px);
+}
+button:hover{
+    border-width: 3.5px;
+    cursor: url(Textures/ue\ \(1\).png),auto;
+}
+h3{
+    display: fixed;
+    justify-content: center;
+    justify-self: center;
+    align-items: top;
+    font-family: "Silkscreen", sans-serif;
+    font-size: 50px;
+    transform: translateY(-380px);
+    color: #d6c65d;
 }
