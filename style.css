@@ -59,3 +59,7 @@ h3{
     transform: translateY(-380px);
     color: #d6c65d;
 }
+.car{
+    position: absolute;
+    width: 50pxss;
+}

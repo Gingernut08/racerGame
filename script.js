@@ -13,13 +13,12 @@ for(let i=0;i<no;i++){
 //i like to mov it move it 
 function move(){
     for(let i=0;i<car.length;i++){
-        let x=parseFloat(car{i}.style.left);
+        let x=parseFloat(car[i].style.left);
         x+=0.2;
         if(x>100){
             x=-10
         }
-        car{i}.style.left=x+%;
-        
+        car[i].style.left=x+"%"
     }
     requestAnimationFrame(move);
 }
