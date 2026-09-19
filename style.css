@@ -3,10 +3,15 @@ body{
     color: #d5dad3;
 }
 #bg{
-    transform: rotate(90deg);
-    height: fit-content;
-    width: 1000px;
+    height: auto;
+    width: 100%;
     object-fit: fill;
-    position: relative;
-    top: -400px;
+    z-index: 0;
+}
+h1{
+    z-index: 1;
+    font-size: 80px;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 20px;
 }
