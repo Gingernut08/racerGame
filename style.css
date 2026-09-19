@@ -2,6 +2,11 @@ body{
     background-color: #416036;
     color: #d5dad3;
 }
-#img{
-    transform: rotateY('90');
+#bg{
+    transform: rotate(90deg);
+    height: fit-content;
+    width: 1000px;
+    object-fit: fill;
+    position: relative;
+    top: -400px;
 }
