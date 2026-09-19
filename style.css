@@ -61,5 +61,8 @@ h3{
 }
 .car{
     position: absolute;
-    width: 50pxss;
+    width: 50px;
+    transform: rotate(90deg);
+    opacity: 1;
+    z-index: 10;
 }
