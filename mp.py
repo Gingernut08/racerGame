@@ -12,7 +12,7 @@ car = pygame.image.load("Textures/car/RGBBlackCar.png").convert_alpha()
 car=pygame.transform.scale(car,(50,50))
 car = pygame.transform.rotate(car,270)
 carx=400
-cary=200 #bottom=450 top=200
+cary=430 #bottom=430 top=200
 running=True
 go=[]
 while running:
