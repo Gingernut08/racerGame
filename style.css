@@ -1,0 +1,7 @@
+body{
+    background-color: #416036;
+    color: #d5dad3;
+}
+#img{
+    transform: rotateY('90');
+}
