@@ -12,14 +12,22 @@ body{
     height: auto;
     width: 100%;
     object-fit: fill;
-    z-index: 0;
+    z-index: -1;
+    top: 0;
+    left: 0;
 }
 h1{
     display: flex;
-    z-index: 1;
-    font-size: 80px;
+    z-index: 0;
+    font-size: 150px;
     justify-content: center;
     align-items: center;
     margin: 50px 80px;
     font-family: "Silkscreen", sans-serif;
+    transform: translateY(-440px);
+}
+#top{
+    display: contents;
+    justify-content: center;
+    align-items: center;
 }
