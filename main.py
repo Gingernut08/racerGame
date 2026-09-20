@@ -50,10 +50,6 @@ def toggle_music():
     global music
     music = not music
 
-def adjust_sfx():
-    global sfx, sfxVolume
-    
-
 
 
 while running:
