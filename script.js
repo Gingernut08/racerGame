@@ -56,3 +56,11 @@ function move(){
 }
 move();
 
+//leaderboard time, lowk wish i had an easy way to use emojs here or memes thatd be really cool
+fetch("leaderboard.json")
+    .then(function(res){
+        return res.json();
+    })
+    .then(function(data){
+        console.log(data);
+    })
