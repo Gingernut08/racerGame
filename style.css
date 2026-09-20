@@ -16,11 +16,10 @@ body{
     z-index: -1;
     top: 0;
     left: 0;
-    visibility: hidden;
 }
 h1{
     display: flex;
-    z-index: 0;
+    z-index: 1;
     font-size: 150px;
     justify-content: center;
     align-items: center;
