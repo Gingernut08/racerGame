@@ -1,4 +1,4 @@
-from imports import pygame, Image, os, time, sin, cos, radians, log2, ceil, pi, hypot
+from imports import pygame, Image, os, time, sin, cos, radians, log2, ceil, pi, hypot, degrees, atan2, mean
 
 WIDTH, HEIGHT = 1920, 1080
 
@@ -16,7 +16,64 @@ friction = 0.05
 endTurn = 1.5
 hudPadding = [10, 20]
 bestTurnSpeed = 8
+class Cursor:
+    def __init__(self, size):
+        self.prevPos = [pygame.mouse.get_pos() for _ in range(5)]
+        self.pos = pygame.mouse.get_pos()
+        
+        self.size = size
+        self.colorOne = (255, 255, 0)
+        self.colorTwo = (255, 100, 0)
+        self.colorThree = (255, 255, 255)
+        self.imageFile = os.path.join("Textures", "car", "RGBBlackCar.png")
+        self.texture = pygame.transform.scale(
+            pygame.image.load(os.path.join("Textures", "car", "CarTexture.png")).convert_alpha(),
+            (self.size, self.size))
+        self.change_colors()
+        self.angle = 0
+        
+        
+    def change_colors(self):
+        # Load Image File
+        img = Image.open(self.imageFile).convert("RGBA")
+        pixData = img.load()
+        # Iterate through all pixels in the image
+        for y in range(img.size[1]):
+            for x in range(img.size[0]):
+                # If pixel is Red replace with colorOne
+                if pixData[x, y] == (255, 0, 0, 255):
+                    pixData[x, y] = (*self.colorOne, 255)
+                # If pixel is Green replace with colorTwo
+                if pixData[x, y] == (0, 255, 0, 255):
+                    pixData[x, y] = (*self.colorTwo, 255)
+                # If pixel if Blue replace with colorThree
+                if pixData[x, y] == (0, 0, 255, 255):
+                    pixData[x, y] = (*self.colorThree, 255)
+        # Convert image back into pygame surface
+        self.image = pygame.transform.scale(pygame.image.frombytes(
+            img.tobytes(),
+            img.size,
+            img.mode
+        ), 
+        (self.size, self.size))
 
+    def draw(self, screen):
+        self.prevPos.append(self.pos)
+        self.prevPos.pop(0)
+        self.pos = pygame.mouse.get_pos()
+
+        dx = [self.pos[0] - self.prevPos[i][0] for i in range(5)]
+        dy = [self.prevPos[i][1] - self.pos[1] for i in range(5)]
+
+        if dx != 0 or dy != 0:
+            self.angles = [degrees(atan2(dy[i], dx[i])) - 90 for i in range(5)]
+        self.angle = mean(self.angles)
+
+        image = pygame.transform.rotate(self.image, self.angle)
+        texture = pygame.transform.rotate(self.texture, self.angle)
+
+        screen.blit(image, image.get_rect(center=self.pos))
+        screen.blit(texture, texture.get_rect(center=self.pos))
 
 class HUD:
     def __init__(self, car):

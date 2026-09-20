@@ -1,5 +1,5 @@
 from imports import pygame, os, copy, Image
-from assets import Car, Track, WIDTH, HEIGHT
+from assets import Cursor, Car, Track, WIDTH, HEIGHT
 from math import sin, cos, radians, log2, ceil, atan2, degrees
 from statistics import mean
 
@@ -25,66 +25,9 @@ with open(os.path.join("Saves", "tracks" + ".txt"), "r") as file:
 trackValues.insert(0, "0000000000000000000000000000")
 trackIndex = 0
 
-class Cursor:
-    def __init__(self, size):
-        self.prevPos = [pygame.mouse.get_pos() for _ in range(5)]
-        self.pos = pygame.mouse.get_pos()
-        
-        self.size = size
-        self.colorOne = (255, 255, 0)
-        self.colorTwo = (0, 255, 255)
-        self.colorThree = (255, 0, 255)
-        self.imageFile = os.path.join("Textures", "car", "RGBBlackCar.png")
-        self.texture = pygame.transform.scale(
-            pygame.image.load(os.path.join("Textures", "car", "CarTexture.png")).convert_alpha(),
-            (self.size, self.size))
-        self.change_colors()
-        self.angle = 0
-        
-        
-    def change_colors(self):
-        # Load Image File
-        img = Image.open(self.imageFile).convert("RGBA")
-        pixData = img.load()
-        # Iterate through all pixels in the image
-        for y in range(img.size[1]):
-            for x in range(img.size[0]):
-                # If pixel is Red replace with colorOne
-                if pixData[x, y] == (255, 0, 0, 255):
-                    pixData[x, y] = (*self.colorOne, 255)
-                # If pixel is Green replace with colorTwo
-                if pixData[x, y] == (0, 255, 0, 255):
-                    pixData[x, y] = (*self.colorTwo, 255)
-                # If pixel if Blue replace with colorThree
-                if pixData[x, y] == (0, 0, 255, 255):
-                    pixData[x, y] = (*self.colorThree, 255)
-        # Convert image back into pygame surface
-        self.image = pygame.transform.scale(pygame.image.frombytes(
-            img.tobytes(),
-            img.size,
-            img.mode
-        ), 
-        (self.size, self.size))
 
-    def draw(self, screen):
-        self.prevPos.append(self.pos)
-        self.prevPos.pop(0)
-        self.pos = pygame.mouse.get_pos()
 
-        dx = [self.pos[0] - self.prevPos[i][0] for i in range(5)]
-        dy = [self.prevPos[i][1] - self.pos[1] for i in range(5)]
-
-        if dx != 0 or dy != 0:
-            self.angles = [degrees(atan2(dy[i], dx[i])) - 90 for i in range(5)]
-        self.angle = mean(self.angles)
-
-        image = pygame.transform.rotate(self.image, self.angle)
-        texture = pygame.transform.rotate(self.texture, self.angle)
-
-        screen.blit(image, image.get_rect(center=self.pos))
-        screen.blit(texture, texture.get_rect(center=self.pos))
-
-textCursor = Cursor(20)
+cursor = Cursor(20)
 
 while running:
     # Get all events
@@ -119,9 +62,7 @@ while running:
     
     trackOne.draw(state)
     if state == 1:
-        textCursor.draw(screen)
-        print(textCursor.angle)
-        # screen.blit(cursor, pygame.mouse.get_pos())
+        cursor.draw(screen)
     
     
     # update display
