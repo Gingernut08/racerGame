@@ -12,9 +12,9 @@ for(let i=0;i<no;i++){
     trail.speed=0.3+Math.random()*0.7;  
     trail.sp=trail.speed;  
     trail.lane=parseFloat(trail.style.top);
-    trail.s1=0.01+Math.random()*0.03;
+    trail.s1=0.01+Math.random()*0.04;
     trail.s2=Math.random()*100;
-    trail.s3=1+Math.random()*3;
+    trail.s3=1+Math.random()*4;
     trail.appendChild(car2);
     document.body.appendChild(trail);
     car.push(trail);
@@ -32,13 +32,19 @@ function move(){
         for(let j=0;j<car.length;j++){
             if(i===j)continue;
             let pt1=parseFloat(car[j].style.left);
-            let gap=pt1-x;        
-       
-            if(gap>0 && gap<3){
+            let pt2=parseFloat(car[j].style.top);
+            let gap=pt1-x;
+            let side=Math.abs(pt2-parseFloat(car[i].style.top));
+            if(gap>0 && gap<6 && side<3){
                 target=0.15;
             } 
         }
-        car[i].sp+=(sp-car[i].sp)*0.4;
+        if(target===0.15){
+            car[i].sp+=(target-car[i].sp)*0.4;
+        }
+        else{
+            car[i].sp+=(target-car[i].sp)*0.8;
+        }
         x+=car[i].sp;
         if(x>100){
             x=-10;
