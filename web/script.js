@@ -84,14 +84,17 @@ fetch("leaderboard.json")
             if(i===0){
                 row.style.border="3px solid gold";
                 row.style.color="gold";
+                row.className="one";
             }
             if(i===1){
                 row.style.border="3px solid silver";
                 row.style.color="silver";
+                row.className="two";
             }
             if(i===2){
                 row.style.border="3px solid #cd7f32"
-                row.style.color="#cd7f32"
+                row.style.color="#cd7f32";
+                row.className="three";
             }
         }
 

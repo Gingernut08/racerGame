@@ -114,3 +114,12 @@ h3{
     border-radius: 10px;
     overflow-y: auto;
 }
+.one:hover{
+    box-shadow: 0 0 20px gold;
+}
+.two:hover{
+    box-shadow: 0 0 20px silver;
+}
+.three:hover{
+    box-shadow: 0 0 20px #cd7f32;
+}
