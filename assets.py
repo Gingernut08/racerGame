@@ -405,6 +405,8 @@ class Car:
         self.loopSfx = ["engine"]
         self.sounds = create_sfx(self.sfx)
         self.playing = {sfx: 0 for sfx in self.sfx}
+        
+        self.screechTime = 0
 
     def change_colors(self):
         # Load Image File
@@ -532,12 +534,14 @@ class Car:
     def play_sfx(self):
         for key in self.sfx:
             if self.playing[key] == 0:
-                self.sounds[key].stop()
+                pass
+                # self.sounds[key].stop()
             elif self.playing[key] == 1:
                 if key in self.loopSfx:
                     # self.sounds[key].play(-1)
                     self.playing[key] = 2
                 else:
+                    print(key)
                     self.sounds[key].play()
                     self.playing[key] = 0
 
@@ -549,7 +553,9 @@ class Car:
         x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
         finalTurnSpeed = turnSpeed - (turnSpeed - endTurn) * x ** 4
         if finalTurnSpeed != 0 and speed >= squeelSpeed:
-            self.playing["screech"] = 1
+            if time.time() - self.screechTime >= 0.1:
+                self.sounds["screech"].play()
+                self.screechTime = time.time()
             
         return finalTurnSpeed
 
