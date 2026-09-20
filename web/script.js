@@ -89,7 +89,7 @@ fetch("leaderboard.json")
             let time=document.createElement("span");
             rank.textContent=1+i;
             name.textContent=data.score[i].name;
-            time.textContent=data.score[i].time
+            time.textContent=(data.score[i].time/100).toFixed(2)+"s";
             row.appendChild(rank);
             row.appendChild(name);
             row.appendChild(time);
