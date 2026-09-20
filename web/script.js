@@ -81,6 +81,18 @@ fetch("leaderboard.json")
             row.appendChild(name);
             row.appendChild(time);
             lele.appendChild(row);
+            if(i===0){
+                row.style.border="3px solid gold";
+                row.style.color="gold";
+            }
+            if(i===1){
+                row.style.border="3px solid silver";
+                row.style.color="silver";
+            }
+            if(i===2){
+                row.style.border="3px solid #cd7f32"
+                row.style.color="#cd7f32"
+            }
         }
 
     })

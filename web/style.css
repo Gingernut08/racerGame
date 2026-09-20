@@ -105,11 +105,12 @@ h3{
 #lele div{
     display: flex;
     justify-content: space-between;
-    width: 400px;
+    width: 450px;
     font-family: "Silkscreen", sans-serif;
     background-color: #d5dad3;
     color: #a35021;
     padding: 10px;
-    margin: 8px 0;
+    margin: 12px 0;
     border-radius: 10px;
+    overflow-y: auto;
 }
