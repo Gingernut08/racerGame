@@ -17,6 +17,7 @@ endTurn = 1.5
 hudPadding = [10, 20]
 bestTurnSpeed = 8
 squeelSpeed = 9
+screechTurnTimme = 0.7
 
 def create_sfx(fileNames):
     sfxItems = {}
@@ -552,7 +553,7 @@ class Car:
             return turnSpeed * sin((x ** 1.5 * pi / 2))
         x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
         finalTurnSpeed = turnSpeed - (turnSpeed - endTurn) * x ** 4
-        if finalTurnSpeed != 0 and speed >= squeelSpeed:
+        if finalTurnSpeed != 0 and speed >= squeelSpeed and time.time() - self.turnTime > screechTurnTimme:
             if time.time() - self.screechTime >= 0.1:
                 self.sounds["screech"].play()
                 self.screechTime = time.time()
