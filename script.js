@@ -24,8 +24,8 @@ function move(){
             if(i===j)continue;
             let pt1=parseFloat(car[j].style.left);
             let gap=pt1-1;
-            if(gap>0 && gap<8){
-                sp*0.2;
+            if(gap>0 && gap<3){
+                sp*=0.3;
             }
         }
         x+=sp;
