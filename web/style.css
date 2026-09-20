@@ -112,7 +112,6 @@ h3{
     padding: 10px;
     margin: 12px 0;
     border-radius: 10px;
-    overflow-y: auto;
     margin-left: auto;
     margin-right: auto;
     transform: translateY(-380px);
@@ -126,7 +125,16 @@ h3{
 .three:hover{
     box-shadow: 0 0 20px #cd7f32;
 }
-#lele div:not(.one):not(.two):not(.three):hover{
+#lele div:not(.one):not(.two):not(.three):not(.head):hover{
     box-shadow: 0 0 10px #989b96;
 }
-
+#lele span{
+    width: 33%;
+}
+.head{
+    background-color: #d5dad3d6 !important;
+    color: #252525 !important;
+    border: 2px solid #a35021;
+    font-size: 20px;
+    margin: bottom 5px;
+}

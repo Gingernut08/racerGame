@@ -66,10 +66,23 @@ fetch("leaderboard.json")
         let lele=document.getElementById("lele");
         data.score.sort(function(a,b){
             return a.time-b.time;
-        })
+        })  
+           
+            let head=document.createElement("div");
+            let hrank=document.createElement("span");
+            let hname=document.createElement("span");
+            let htime=document.createElement("span");
+            hrank.textContent="RANK";
+            hname.textContent="NAME";
+            htime.textContent="TIME";
+            head.appendChild(hrank);
+            head.appendChild(hname);
+            head.appendChild(htime);
+            lele.appendChild(head);
+            head.className="head";
         for(let i=0;i<data.score.length;i++){
             console.log(data.score[i].name);
-            console.log(data.score[i].time);
+            console.log(data.score[i].time); 
             let row=document.createElement("div");
             let rank=document.createElement("span");
             let name= document.createElement("span");
