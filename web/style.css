@@ -1,0 +1,103 @@
+.silkscreen-bold {
+  font-family: "Silkscreen", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body{
+    background-color: #2f2e2d;
+    color: #d5dad3;
+    cursor: url(../Textures/ue\ \(1\).png),auto;
+}
+#bg{
+    display: absolute;
+    height: auto;
+    width: 100%;
+    object-fit: fill;
+    z-index: -1;
+    top: 0;
+    left: 0;
+}
+h1{
+    position: relative;
+    display: flex;
+    z-index: 1000000;
+    font-size: 150px;
+    justify-content: center;
+    align-items: center;
+    margin: 50px 80px;
+    font-family: "Silkscreen", sans-serif;
+    transform: translateY(-440px);
+    text-shadow: 0 0 12px #d6c65d;
+}
+#top{
+    display: contents;
+    justify-content: center;
+    align-items: center;
+}
+button{
+    position: relative;
+    z-index: 10000000;
+    border: #a35021 solid 2px;
+    border-radius: 7px;
+    background-color: #d5dad3;
+    color: #252525;
+    font-family: "Silkscreen", sans-serif;
+    font-size: large;
+    display: flex;
+    align-items: center;   
+    justify-content: center;
+    justify-self: center;
+    transform: translateY(-480px);
+}
+button:hover{
+    border-width: 3.5px;
+    cursor: url(../Textures/ue\ \(1\).png),auto;
+}
+h3{
+    display: absolute;
+    justify-content: center;
+    justify-self: center;
+    align-items: top;
+    font-family: "Silkscreen", sans-serif;
+    font-size: 50px;
+    transform: translateY(-380px);
+    color: #d6c65d;
+}
+.trcar{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+
+    opacity: 1;
+    z-index: 9999;
+}
+.car{
+    position: relative;
+    width: 50px;
+    z-index: 2;    
+    transform: rotate(90deg);
+}
+.trcar::before{
+    content: "";
+    position: absolute;
+    right: 35px;
+    top: 50%;
+    width: 60px;
+    height: 12px;
+    transform: translateY(-50%);
+    background: linear-gradient(to left,rgba(163, 160, 160, 0.998),transparent);
+    filter: blur(5px);
+    opacity: 0.7;
+    animation: exhaust 0.30s infinite alternate;
+}
+@keyframes exhaust{
+    from{
+        width: 40px;
+        opacity: 0.4;
+    }
+    to{
+        width: 75px;
+        opacity: 0.8;
+    }
+}
