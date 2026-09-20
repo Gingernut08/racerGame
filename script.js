@@ -62,5 +62,19 @@ fetch("leaderboard.json")
         return res.json();
     })
     .then(function(data){
-        console.log(data);
+        console.log(data);        
+        let lele=document.getElementById("lele");
+        data.score.sort(function(a,b){
+            return a.time-b.time;
+        })
+        for(let i=0;i<data.score.length;i++){
+            console.log(data.score[i].name);
+            console.log(data.score[i].time);
+            let row=document.createElement("p");
+            row.textContent=data.score[i].name+"-"+data.score[i].time;
+            lele.appendChild(row);
+        }
+
     })
+
+
