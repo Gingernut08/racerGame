@@ -16,6 +16,15 @@ friction = 0.05
 endTurn = 1.5
 hudPadding = [10, 20]
 bestTurnSpeed = 8
+squeelSpeed = 9
+
+def create_sfx(fileNames):
+    sfxItems = {}
+    for file in fileNames:
+        sfxItems[file] = pygame.mixer.Sound(os.path.join("audio", "sfx", "screech" + ".mp3"))
+        # sfxItems[file] = pygame.mixer.Sound(os.path.join("audio", "sfx", file + ".mp3"))
+    return sfxItems
+
 class Cursor:
     def __init__(self, size):
         self.prevPos = [pygame.mouse.get_pos() for _ in range(5)]
@@ -391,6 +400,11 @@ class Car:
         self.dotShown = False
         self.pivots = [pygame.Vector2(self.image.get_width() / 2, 0.2 * self.image.get_height()), pygame.Vector2(self.image.get_height() / 2)]
         self.pivotNum = 0
+        
+        self.sfx = ["screech", "engine", "honk"]
+        self.loopSfx = ["engine"]
+        self.sounds = create_sfx(self.sfx)
+        self.playing = {sfx: 0 for sfx in self.sfx}
 
     def change_colors(self):
         # Load Image File
@@ -438,6 +452,7 @@ class Car:
         return rect, texture_rect
 
     def draw(self, screen):
+        self.play_sfx()
         rotated_image = pygame.transform.rotate(self.image, self.angle)
         rotated_texture = pygame.transform.rotate(self.texture, self.angle)
 
@@ -493,6 +508,10 @@ class Car:
             self.movementKeys[0] += 1
         if keys[pygame.K_LEFT]:
             self.movementKeys[0] -= 1
+        if self.movementKeys[0] == 0:
+            self.playing["engine"] = 0
+        else:
+            self.playing["engine"] = 1
 
         if keys[pygame.K_a]:
             self.movementKeys[1] += 1
@@ -510,13 +529,29 @@ class Car:
             self.pivotNum += 1
             self.pivotNum %= 2
 
+    def play_sfx(self):
+        for key in self.sfx:
+            if self.playing[key] == 0:
+                self.sounds[key].stop()
+            elif self.playing[key] == 1:
+                if key in self.loopSfx:
+                    # self.sounds[key].play(-1)
+                    self.playing[key] = 2
+                else:
+                    self.sounds[key].play()
+                    self.playing[key] = 0
+
     def getTurnAmount(self, speed):
         speed = abs(speed)
         if speed <= bestTurnSpeed:
             x = speed / bestTurnSpeed
             return turnSpeed * sin((x ** 1.5 * pi / 2))
         x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
-        return turnSpeed - (turnSpeed - endTurn) * x ** 4
+        finalTurnSpeed = turnSpeed - (turnSpeed - endTurn) * x ** 4
+        if finalTurnSpeed != 0 and speed >= squeelSpeed:
+            self.playing["screech"] = 1
+            
+        return finalTurnSpeed
 
     def calculate_movement(self):
         
