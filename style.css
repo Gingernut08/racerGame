@@ -10,6 +10,7 @@ body{
     cursor: url(Textures/ue\ \(1\).png),auto;
 }
 #bg{
+    display: absolute;
     height: auto;
     width: 100%;
     object-fit: fill;
@@ -18,14 +19,16 @@ body{
     left: 0;
 }
 h1{
+    position: relative;
     display: flex;
-    z-index: 1;
+    z-index: 1000000;
     font-size: 150px;
     justify-content: center;
     align-items: center;
     margin: 50px 80px;
     font-family: "Silkscreen", sans-serif;
     transform: translateY(-440px);
+    text-shadow: 0 0 12px #d6c65d;
 }
 #top{
     display: contents;
@@ -33,6 +36,8 @@ h1{
     align-items: center;
 }
 button{
+    position: relative;
+    z-index: 10000000;
     border: #a35021 solid 2px;
     border-radius: 7px;
     background-color: #d5dad3;
@@ -50,7 +55,7 @@ button:hover{
     cursor: url(Textures/ue\ \(1\).png),auto;
 }
 h3{
-    display: fixed;
+    display: absolute;
     justify-content: center;
     justify-self: center;
     align-items: top;

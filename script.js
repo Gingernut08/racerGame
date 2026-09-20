@@ -9,12 +9,12 @@ for(let i=0;i<no;i++){
     car2.style.top=19+Math.random()*45+"%";
     document.body.appendChild(car2);
     car.push(car2);
-}
+}   
 //i like to mov it move it 
 function move(){
     for(let i=0;i<car.length;i++){
         let x=parseFloat(car[i].style.left);
-        x+=0.2;
+        x+=0.7;
         if(x>100){
             x=-10;
         }
