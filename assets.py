@@ -32,7 +32,6 @@ class Cursor:
         self.change_colors()
         self.angle = 0
         
-        
     def change_colors(self):
         # Load Image File
         img = Image.open(self.imageFile).convert("RGBA")
@@ -58,23 +57,30 @@ class Cursor:
         (self.size, self.size))
 
     def draw(self, screen):
-        self.prevPos.append(self.pos)
+        mousePos = pygame.mouse.get_pos()
+
+        self.prevPos.append(mousePos)
         self.prevPos.pop(0)
-        self.pos = pygame.mouse.get_pos()
 
-        dx = [self.pos[0] - self.prevPos[i][0] for i in range(5)]
-        dy = [self.prevPos[i][1] - self.pos[1] for i in range(5)]
+        angles = []
 
-        if dx != 0 or dy != 0:
-            self.angles = [degrees(atan2(dy[i], dx[i])) - 90 for i in range(5)]
-        self.angle = mean(self.angles)
+        for i in range(5):
+            dx = mousePos[0] - self.prevPos[i][0]
+            dy = self.prevPos[i][1] - mousePos[1]
+
+            if dx != 0 or dy != 0:
+                angles.append(degrees(atan2(dy, dx)) - 90)
+
+        if angles:
+            self.angle = mean(angles)
+
+        self.pos = mousePos
 
         image = pygame.transform.rotate(self.image, self.angle)
         texture = pygame.transform.rotate(self.texture, self.angle)
 
         screen.blit(image, image.get_rect(center=self.pos))
         screen.blit(texture, texture.get_rect(center=self.pos))
-
 class HUD:
     def __init__(self, car):
         pos = [WIDTH - PADDING[1] + 20, HEIGHT - PADDING[2] + 20]

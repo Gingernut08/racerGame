@@ -25,8 +25,6 @@ with open(os.path.join("Saves", "tracks" + ".txt"), "r") as file:
 trackValues.insert(0, "0000000000000000000000000000")
 trackIndex = 0
 
-
-
 cursor = Cursor(20)
 
 while running:
@@ -63,7 +61,6 @@ while running:
     trackOne.draw(state)
     if state == 1:
         cursor.draw(screen)
-    
     
     # update display
     pygame.display.flip()
