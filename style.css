@@ -16,6 +16,7 @@ body{
     z-index: -1;
     top: 0;
     left: 0;
+    visibility: hidden;
 }
 h1{
     display: flex;
@@ -64,5 +65,5 @@ h3{
     width: 50px;
     transform: rotate(90deg);
     opacity: 1;
-    z-index: 999;
+    z-index: 9999;
 }

@@ -8,7 +8,7 @@ for(let i=0;i<no;i++){
     car2.className="car";
     //temporariliy here, will be altered based on where it goes later
     car2.style.left=Math.random()*100+"%";
-    car2.style.top=Math.random()*100+"%";
+    car2.style.top=top+Math.random()*(bot-top)+"%";
     document.body.appendChild(car2);
     car.push(car2)
 }
