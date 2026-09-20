@@ -17,8 +17,18 @@ for(let i=0;i<no;i++){
 //i like to mov it move it 
 function move(){
     for(let i=0;i<car.length;i++){
+        //hmmm trafficc behaviour
         let x=parseFloat(car[i].style.left);
-        x+=car[i].speed;
+        let sp=car[i].speed;
+        for(let j=0;j<car.length;j++){
+            if(i===j)continue;
+            let pt1=parseFloat(car[j].style.left);
+            let gap=pt1-1;
+            if(gap>0 && gap<8){
+                sp*0.2;
+            }
+        }
+        x+=sp;
         if(x>100){
             x=-10;
         }
