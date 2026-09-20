@@ -70,11 +70,17 @@ fetch("leaderboard.json")
         for(let i=0;i<data.score.length;i++){
             console.log(data.score[i].name);
             console.log(data.score[i].time);
-            let row=document.createElement("p");
-            row.textContent=data.score[i].name+"-"+data.score[i].time;
+            let row=document.createElement("div");
+            let rank=document.createElement("span");
+            let name= document.createElement("span");
+            let time=document.createElement("span");
+            rank.textContent=1+i;
+            name.textContent=data.score[i].name;
+            time.textContent=data.score[i].time
+            row.appendChild(rank);
+            row.appendChild(name);
+            row.appendChild(time);
             lele.appendChild(row);
         }
 
     })
-
-
