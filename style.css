@@ -64,14 +64,21 @@ h3{
     transform: translateY(-380px);
     color: #d6c65d;
 }
-.car{
+.trcar{
     position: absolute;
     width: 50px;
-    transform: rotate(90deg);
+    height: 50px;
+
     opacity: 1;
     z-index: 9999;
 }
-.car::before{
+.car{
+    position: relative;
+    width: 50px;
+    z-index: 2;    
+    transform: rotate(90deg);
+}
+.trcar::before{
     content: "";
     position: absolute;
     right: 35px;
