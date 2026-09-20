@@ -1,4 +1,4 @@
-import subprocess, sys
+from imports import subprocess, sys
 
 subprocess.run([
     sys.executable,

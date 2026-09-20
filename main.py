@@ -1,13 +1,11 @@
-from imports import pygame, os, copy, Image
-from assets import Cursor, Car, Track, WIDTH, HEIGHT
-from math import sin, cos, radians, log2, ceil, atan2, degrees
-from statistics import mean
+from imports import pygame, os, copy
+from assets import Cursor, Track, WIDTH, HEIGHT
 
 pygame.init()
 pygame.mixer.init()
 pygame.mixer.music.load(os.path.join("audio", "carSoundtrack" + ".mp3"))
 pygame.mixer.music.set_volume(0)
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.mouse.set_visible(False)

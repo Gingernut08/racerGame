@@ -1,4 +1,4 @@
-from imports import pygame, Image, os, time, sin, cos, radians, log2, ceil, pi, hypot, degrees, atan2, mean
+from imports import pygame, Image, os, time, sin, cos, radians, log2, ceil, degrees, atan2, pi, mean
 
 WIDTH, HEIGHT = 1920, 1080
 
