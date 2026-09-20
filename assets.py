@@ -19,6 +19,7 @@ bestTurnSpeed = 8
 squeelSpeed = 9
 screechTurnTimme = 0.7
 turnAcceleration = 0.25
+turnCentering = 0.5
 
 def create_sfx(fileNames):
     sfxItems = {}
@@ -409,6 +410,8 @@ class Car:
         self.playing = {sfx: 0 for sfx in self.sfx}
         
         self.screechTime = 0
+        
+        self.turnSpeed = 0
 
     def change_colors(self):
         # Load Image File
@@ -547,20 +550,41 @@ class Car:
                     self.sounds[key].play()
                     self.playing[key] = 0
 
-    def getTurnAmount(self, speed):
+    # def getTurnAmount(self, speed):
+    #     speed = abs(speed)
+    #     if speed <= bestTurnSpeed:
+    #         x = speed / bestTurnSpeed
+    #         return turnSpeed * sin((x ** 1.5 * pi / 2))
+    #     x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
+    #     finalTurnSpeed = turnSpeed - (turnSpeed - endTurn) * x ** 4
+    #     turningTime = time.time() - self.turnTime
+    #     finalTurnSpeed *= min(turningTime / turnAcceleration, 1)
+    #     if finalTurnSpeed != 0 and speed >= squeelSpeed and time.time() - self.turnTime > screechTurnTimme:
+    #         if time.time() - self.screechTime >= 0.1:
+    #             self.sounds["screech"].play()
+    #             self.screechTime = time.time()
+    #     return finalTurnSpeed
+
+    def get_max_turn(self, speed):
         speed = abs(speed)
         if speed <= bestTurnSpeed:
             x = speed / bestTurnSpeed
             return turnSpeed * sin((x ** 1.5 * pi / 2))
         x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
-        finalTurnSpeed = turnSpeed - (turnSpeed - endTurn) * x ** 4
+        maxTurnSpeed = turnSpeed - (turnSpeed - endTurn) * x ** 4
+        return maxTurnSpeed
+    
+    def calculate_turning(self):
         turningTime = time.time() - self.turnTime
-        finalTurnSpeed *= min(turningTime / turnAcceleration, 1)
-        if finalTurnSpeed != 0 and speed >= squeelSpeed and time.time() - self.turnTime > screechTurnTimme:
-            if time.time() - self.screechTime >= 0.1:
-                self.sounds["screech"].play()
-                self.screechTime = time.time()
-        return finalTurnSpeed
+        maxTurnSpeed = self.get_max_turn(self.movement[0])
+        if self.movementKeys[1] != 0:
+            print(min(turningTime / turnAcceleration, 1))
+            self.turnSpeed += self.movementKeys[1] * min(turningTime / turnAcceleration, 1) * maxTurnSpeed
+            self.turnSpeed = max(min(self.turnSpeed, maxTurnSpeed), -maxTurnSpeed)
+        elif self.turnSpeed >= 0:
+            self.turnSpeed -= turnCentering * self.turnSpeed
+        elif self.turnSpeed <= 0:
+            self.turnSpeed += turnCentering * self.turnSpeed
 
     def calculate_movement(self):
         
@@ -573,11 +597,12 @@ class Car:
         )
         
         self.get_key_inputs()
-        angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement[0])
-        self.angle += angleChange
+        # angleChange = self.movementKeys[1] * (1 if self.movement[0] >= 0 else -1) * self.getTurnAmount(self.movement[0])
+        self.calculate_turning()
+        self.angle += self.turnSpeed
         
         self.calculate_velocity()
         self.move_ammount(self.movement[0])
         
-        self.hud.values = [angleChange / turnSpeed, self.movement[0] / moveSpeed]
+        self.hud.values = [self.turnSpeed / turnSpeed, self.movement[0] / moveSpeed]
         # self.pos += forward * self.movementKeys[0] * moveSpeed
