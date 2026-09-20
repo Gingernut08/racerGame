@@ -311,7 +311,7 @@ class Car:
         self.movementKeys = [0, 0] # [1 = forward -1 = back, 1 = left -1 = right]
         self.movement = [0, 0]
         self.pos = pygame.Vector2(500, 500)
-        self.angle = 1
+        self.angle = 0
         self.size = size
         self.colorOne = (255, 255, 0)
         self.colorTwo = (0, 255, 255)
