@@ -18,8 +18,9 @@ hudPadding = [10, 20]
 bestTurnSpeed = 8
 squeelSpeed = 9
 screechTurnTimme = 0.7
-turnAcceleration = 0.25
-turnCentering = 0.5
+turnAcceleration = 0.1
+turnCentering = 20
+minTurnSpeed = 0.05
 
 def create_sfx(fileNames):
     sfxItems = {}
@@ -271,46 +272,54 @@ class Track:
         self.tiles = [pygame.transform.scale(
             pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in reversed(range(16))]
         self.car = Car(self.tileSize // 2, self)
-    
-    def import_shape(self, endoceString):
+    def import_shape(self, encodeString):
         number = 0
 
-        for char in endoceString:
+        for char in encodeString:
             number = number * len(BASE) + BASE.index(char)
 
-        binary = bin(number)[2:]
+        total_digits = self.dimensions[0] * self.dimensions[1]
+        base4 = ""
 
-        total_bits = len(self.shape) * len(self.shape[0])
-        binary = binary.zfill(total_bits)
+        while number:
+            number, remainder = divmod(number, 4)
+            base4 = str(remainder) + base4
+
+        base4 = base4.zfill(total_digits)
 
         index = 0
 
-        for y in range(len(self.shape)):
-            for x in range(len(self.shape[y])):
-                self.shape[y][x] = int(binary[index])
+        for y in range(self.dimensions[1]):
+            for x in range(self.dimensions[0]):
+                self.shape[y][x] = int(base4[index])
                 index += 1
 
         self.update_states()
 
+
     def export_shape(self):
-        binary = ''.join(
+        base4 = ''.join(
             str(value)
             for row in self.shape
             for value in row
         )
 
-        number = int(binary, 2)
+        number = int(base4, 4)
+
+        length = ceil(
+            len(base4) / log2(len(BASE))
+        )
+
+        encodeString = ""
 
         if number == 0:
-            return '0'.zfill(ceil((self.dimensions[0] * self.dimensions[1]) / log2(len(BASE))))
-
-        endoceString = ''
+            return "0" * length
 
         while number:
             number, remainder = divmod(number, len(BASE))
-            endoceString = BASE[remainder] + endoceString
+            encodeString = BASE[remainder] + encodeString
 
-        return endoceString.zfill(ceil((self.dimensions[0] * self.dimensions[1]) / log2(len(BASE))))
+        return encodeString.zfill(length)
         
     def update_shape(self, pos):
         index = [
@@ -410,7 +419,7 @@ class Car:
         self.playing = {sfx: 0 for sfx in self.sfx}
         
         self.screechTime = 0
-        
+        self.lastTurnUpdate = time.time()
         self.turnSpeed = 0
 
     def change_colors(self):
@@ -573,19 +582,65 @@ class Car:
         x = (speed - bestTurnSpeed) / (moveSpeed - bestTurnSpeed)
         maxTurnSpeed = turnSpeed - (turnSpeed - endTurn) * x ** 4
         return maxTurnSpeed
-    
-    def calculate_turning(self):
-        turningTime = time.time() - self.turnTime
-        maxTurnSpeed = self.get_max_turn(self.movement[0])
-        if self.movementKeys[1] != 0:
-            print(min(turningTime / turnAcceleration, 1))
-            self.turnSpeed += self.movementKeys[1] * min(turningTime / turnAcceleration, 1) * maxTurnSpeed
-            self.turnSpeed = max(min(self.turnSpeed, maxTurnSpeed), -maxTurnSpeed)
-        elif self.turnSpeed >= 0:
-            self.turnSpeed -= turnCentering * self.turnSpeed
-        elif self.turnSpeed <= 0:
-            self.turnSpeed += turnCentering * self.turnSpeed
 
+
+    def calculate_turning(self):
+        currentTime = time.time()
+        dt = currentTime - self.lastTurnUpdate
+        self.lastTurnUpdate = currentTime
+
+        speed = self.movement[0]
+
+        # No turning at very low speeds
+        if abs(speed) < minTurnSpeed:
+            self.turnSpeed = 0
+            return
+
+        maxTurnSpeed = self.get_max_turn(speed)
+
+        # Prevent extremely small turn values
+        if abs(maxTurnSpeed) < minTurnSpeed:
+            self.turnSpeed = 0
+            return
+
+        # Steering direction is reversed when travelling backwards
+        movementDirection = 1 if speed > 0 else -1
+
+        if self.movementKeys[1] != 0:
+            targetTurnSpeed = (
+                self.movementKeys[1]
+                * movementDirection
+                * maxTurnSpeed
+            )
+
+            # Reach maximum steering in turnAcceleration seconds
+            change = maxTurnSpeed * dt / turnAcceleration
+
+            if self.turnSpeed < targetTurnSpeed:
+                self.turnSpeed = min(
+                    self.turnSpeed + change,
+                    targetTurnSpeed
+                )
+            elif self.turnSpeed > targetTurnSpeed:
+                self.turnSpeed = max(
+                    self.turnSpeed - change,
+                    targetTurnSpeed
+                )
+
+        else:
+            # Return steering towards centre
+            change = turnCentering * dt
+
+            if self.turnSpeed > 0:
+                self.turnSpeed = max(0, self.turnSpeed - change)
+            elif self.turnSpeed < 0:
+                self.turnSpeed = min(0, self.turnSpeed + change)
+
+        # Snap tiny values to zero
+        if abs(self.turnSpeed) < minTurnSpeed:
+            self.turnSpeed = 0
+        
+        
     def calculate_movement(self):
         
         angle = radians(self.angle)
