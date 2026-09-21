@@ -4,7 +4,7 @@ WIDTH, HEIGHT = 1920, 1080
 
 
 BASE = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz`¬!\"£$%^&*()-=_+[]#;',./\\{}~:@<>?|"
-
+SHAPE_BASE = 4
 
 PADDING = [100, 200, 200, 100]
 
@@ -275,45 +275,56 @@ class Track:
     def import_shape(self, encodeString):
         number = 0
 
-        for char in encodeString:
+        for char in encodeString.strip():
+            if char not in BASE:
+                raise ValueError(f"Invalid character in track data: {char!r}")
+
             number = number * len(BASE) + BASE.index(char)
 
         total_digits = self.dimensions[0] * self.dimensions[1]
-        base4 = ""
+        values = []
 
         while number:
-            number, remainder = divmod(number, 4)
-            base4 = str(remainder) + base4
+            number, remainder = divmod(number, SHAPE_BASE)
+            values.append(remainder)
 
-        base4 = base4.zfill(total_digits)
+        values.reverse()
+
+        if len(values) > total_digits:
+            raise ValueError("Track data contains too many values")
+
+        values = [0] * (total_digits - len(values)) + values
 
         index = 0
 
         for y in range(self.dimensions[1]):
             for x in range(self.dimensions[0]):
-                self.shape[y][x] = int(base4[index])
+                self.shape[y][x] = values[index]
                 index += 1
 
         self.update_states()
 
 
     def export_shape(self):
-        base4 = ''.join(
-            str(value)
-            for row in self.shape
-            for value in row
-        )
+        total_digits = self.dimensions[0] * self.dimensions[1]
 
-        number = int(base4, 4)
+        number = 0
 
+        for row in self.shape:
+            for value in row:
+                if not 0 <= value < SHAPE_BASE:
+                    raise ValueError(
+                        f"Shape value {value} is invalid for base {SHAPE_BASE}"
+                    )
+
+                number = number * SHAPE_BASE + value
+
+        # Number of BASE characters needed to represent all SHAPE_BASE digits
         length = ceil(
-            len(base4) / log2(len(BASE))
+            total_digits * log2(SHAPE_BASE) / log2(len(BASE))
         )
 
         encodeString = ""
-
-        if number == 0:
-            return "0" * length
 
         while number:
             number, remainder = divmod(number, len(BASE))

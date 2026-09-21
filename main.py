@@ -22,8 +22,7 @@ running = True
 bgColor = (150, 200, 150)
 
 state = 0
-
-with open(os.path.join("Saves", "tracks" + ".txt"), "r") as file:
+with open(os.path.join("Saves", "tracks" + ".txt"), "r", encoding="utf-8") as file:
     trackValues = [line.strip() for line in file]
 trackValues.insert(0, "0000000000000000000000000000")
 trackIndex = 0
