@@ -35,7 +35,7 @@ h1{
     justify-content: center;
     align-items: center;
 }
-button{
+button:not(#tut){
     position: relative;
     z-index: 10000000;
     border: #a35021 solid 2px;
@@ -116,17 +116,20 @@ h3{
     margin-right: auto;
     transform: translateY(-380px);
     opacity: 0;
-    transform: translateY(20px);
-    animation: appear 0.5s forwards;
+    animation: fade 0.5s forwards;
+    transition: 0.2s;
 }
 .one:hover{
     box-shadow: 0 0 20px gold;
+    transform: scale(1.05);
 }
 .two:hover{
     box-shadow: 0 0 20px silver;
+    transform: scale(1.05);
 }
 .three:hover{
     box-shadow: 0 0 20px #cd7f32;
+    transform: scale(1.05);
 }
 #lele div:not(.one):not(.two):not(.three):not(.head):hover{
     box-shadow: 0 0 10px #989b96;
@@ -141,9 +144,45 @@ h3{
     font-size: 20px;
     margin: bottom 5px;
 }
-@keyframes appear{
+@keyframes fade{
+    from{
+        opacity: 0;
+    }
     to{
         opacity: 1;
-        transform: translateY(0);
     }
+}
+#pop{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #d5dad3;
+    z-index: 10000000000;
+    justify-content: center;
+    align-items: center;
+}
+#box{
+    width: 500px;
+    padding: 30px;
+    background-color: #252525;
+    color: #a35021;
+    border: 3px solid #d6c65d;
+    border-radius: 20px;
+    font-family:"Silkscreen",sans-serif;
+    text-align: center;   
+}
+#cl{
+    transform: none;
+    margin-top: 20px;
+}
+#tut{
+    font-family: "Silkscreen",sans-serif;
+    border: 2px #a35021 solid;
+    background-color: #d5dad3;
+    color: #252525;
+    border-radius: 7px;
+    transform: translateY(200px);
 }

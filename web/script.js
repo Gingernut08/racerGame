@@ -94,6 +94,7 @@ fetch("leaderboard.json")
             row.appendChild(name);
             row.appendChild(time);
             lele.appendChild(row);
+            row.style.animationDelay=(i*0.1)+"s";
             if(i===0){
                 row.style.border="3px solid gold";
                 row.style.color="gold";
@@ -112,3 +113,12 @@ fetch("leaderboard.json")
         }
 
     })
+let tut=document.getElementById("tut");
+let pop=document.getElementById("pop");
+let close=document.getElementById("close");
+tut.addEventListener("click",function(){
+    pop.style.display="flex";
+});
+cl.addEventListener("click",function(){
+    pop.style.display="none";
+})
