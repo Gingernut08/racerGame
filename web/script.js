@@ -16,6 +16,13 @@ for(let i=0;i<no;i++){
     trail.s2=Math.random()*100;
     trail.s3=1+Math.random()*4;
     trail.appendChild(car2);
+    car2.addEventListener("click",function(){
+        trail.speed+=1;
+        trail.classList.add('boost');
+        setTimeout(function(){
+            trail.classList.remove("boost");
+        },500);
+    })
     document.body.appendChild(trail);
     car.push(trail);
 }   
@@ -150,15 +157,15 @@ function onYouTubeIframeAPIReady(){
         }
     });
 }
-mus.addEventListener("click",function(){
-    if(!player){
-        console.log("music not ready");
-        return;
-    }
-    if(player.getPlayerState()===1){
-        player.pauseVideo();
-    }
-    else{
-        player.playVideo();
-    }
-});
+//mus.addEventListener("click",function(){
+    //if(!player){
+        //console.log("music not ready");
+        //return;
+//    }
+    //if(player.getPlayerState()===1){
+        //player.pauseVideo();
+    //}
+    //else{
+      //  player.playVideo();
+    //}
+//saved for laterr//});
