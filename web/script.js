@@ -20,11 +20,23 @@ for(let i=0;i<no;i++){
     car.push(trail);
 }   
 //i like to mov it move it 
+let mouseX=0;
+let mouseY=0;
+document.addEventListener("mousemove",function(e){
+    mouseX=e.clientX;
+    mouseY=e.clientY
+});
 function move(){
     for(let i=0;i<car.length;i++){
         //hmmm trafficc behaviour
         let x=parseFloat(car[i].style.left);
         let sp=car[i].speed;
+        let box=car[i].getBoundingClientRect();
+        let mx=mouseX;
+        let my=mouseY;
+        if(mx>box.left && mx<boxx.right && my>box.top && my<box.bottom){
+            target=0;
+        }
         car[i].s2+=car[i].s1;
         let s5=Math.sin(car[i].s2)*car[i].s3;
         car[i].style.top=(car[i].lane+s5)+"%";
@@ -122,3 +134,4 @@ tut.addEventListener("click",function(){
 cl.addEventListener("click",function(){
     pop.style.display="none";
 })
+
