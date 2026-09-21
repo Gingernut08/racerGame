@@ -139,3 +139,16 @@ cl.addEventListener("click",function(){
     pop.style.display="none";
 })
 
+let mus=document.getElementById("mus");
+let player;
+function onYouTubeIframeAPIReady(){
+    player=new YT.Player("music")
+}
+mus.addEventListener("click",function(){
+    if(player.getPlayerState()===1){
+        player.pauseVideo();
+    }
+    else{
+        player.playVideo();
+    }
+})
