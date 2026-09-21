@@ -142,13 +142,23 @@ cl.addEventListener("click",function(){
 let mus=document.getElementById("mus");
 let player;
 function onYouTubeIframeAPIReady(){
-    player=new YT.Player("music")
+    player=new YT.Player("music",{
+        events:{
+            "onReady":function(){
+                console.log("music ready");
+            }
+        }
+    });
 }
 mus.addEventListener("click",function(){
+    if(!player){
+        console.log("music not ready");
+        return;
+    }
     if(player.getPlayerState()===1){
         player.pauseVideo();
     }
     else{
         player.playVideo();
     }
-})
+});
