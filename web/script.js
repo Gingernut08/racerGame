@@ -115,7 +115,7 @@ fetch("leaderboard.json")
     })
 let tut=document.getElementById("tut");
 let pop=document.getElementById("pop");
-let close=document.getElementById("close");
+let close=document.getElementById("cl");
 tut.addEventListener("click",function(){
     pop.style.display="flex";
 });
