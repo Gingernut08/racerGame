@@ -4,12 +4,12 @@ for(let i=0;i<no;i++){
     const trail=document.createElement("div");
     const car2=document.createElement("img");
     trail.className="trcar";
-    car2.src="../Textures/car/RGBBlackCar.png";
+    car2.src="../Textures/car/RGBBlackCar.png";//its tha pic, yk the one pic yeahh
     car2.className="car";
     //temporariliy here, will be altered based on where it goes later//altered soignore
     trail.style.left=(i*20)+"%";
     trail.style.top=19+Math.random()*40+"%";
-    trail.speed=0.3+Math.random()*0.7;  
+    trail.speed=0.3+Math.random()*0.7; //kinda quick kinda not(legit the golden zone tho icl) 
     trail.sp=trail.speed;  
     trail.lane=parseFloat(trail.style.top);
     trail.s1=0.01+Math.random()*0.04;
@@ -27,7 +27,7 @@ for(let i=0;i<no;i++){
     car.push(trail);
 }   
 //i like to mov it move it 
-let mouseX=0;
+let mouseX=0;//mouse is in play 
 let mouseY=0;
 document.addEventListener("mousemove",function(e){
     mouseX=e.clientX;
@@ -40,7 +40,7 @@ function move(){
         let sp=car[i].speed;let target=car[i].speed;
         let box=car[i].getBoundingClientRect();
         car[i].s2+=car[i].s1;
-        let s5=Math.sin(car[i].s2)*car[i].s3;
+        let s5=Math.sin(car[i].s2)*car[i].s3; //the secret to the swerve
         car[i].style.top=(car[i].lane+s5)+"%";
         
         for(let j=0;j<car.length;j++){
