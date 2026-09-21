@@ -50,6 +50,10 @@ function move(){
         let my=mouseY;
         if(mx>box.left && mx<box.right && my>box.top && my<box.bottom){
             target=0;
+            car[i].children[0].classList.add("hcar");
+        }
+        else{
+            car[i].children[0].classList.remove("hcar");
         }
         if(target===0.15){
             car[i].sp+=(target-car[i].sp)*0.4;
