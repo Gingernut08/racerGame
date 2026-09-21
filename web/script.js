@@ -30,17 +30,12 @@ function move(){
     for(let i=0;i<car.length;i++){
         //hmmm trafficc behaviour
         let x=parseFloat(car[i].style.left);
-        let sp=car[i].speed;
+        let sp=car[i].speed;let target=car[i].speed;
         let box=car[i].getBoundingClientRect();
-        let mx=mouseX;
-        let my=mouseY;
-        if(mx>box.left && mx<boxx.right && my>box.top && my<box.bottom){
-            target=0;
-        }
         car[i].s2+=car[i].s1;
         let s5=Math.sin(car[i].s2)*car[i].s3;
         car[i].style.top=(car[i].lane+s5)+"%";
-        let target=car[i].speed;
+        
         for(let j=0;j<car.length;j++){
             if(i===j)continue;
             let pt1=parseFloat(car[j].style.left);
@@ -50,6 +45,11 @@ function move(){
             if(gap>0 && gap<6 && side<3){
                 target=0.15;
             } 
+        }        
+        let mx=mouseX;
+        let my=mouseY;
+        if(mx>box.left && mx<box.right && my>box.top && my<box.bottom){
+            target=0;
         }
         if(target===0.15){
             car[i].sp+=(target-car[i].sp)*0.4;
