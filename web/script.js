@@ -18,7 +18,7 @@ for(let i=0;i<no;i++){
     trail.appendChild(car2);
     car2.addEventListener("click",function(){
         trail.speed+=1;
-        trail.classList.add('boost');
+        trail.classList.add("boost");
         setTimeout(function(){
             trail.classList.remove("boost");
         },500);

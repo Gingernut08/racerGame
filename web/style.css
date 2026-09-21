@@ -201,3 +201,12 @@ button#cl{
 .hcar{
     filter: drop-shadow(0 0 10px #d5dad3 );
 }
+.boost{
+    filter: drop-shadow(0 0 15px #d6c65d);
+}
+button{
+    transition: 0.2s;
+}
+button:hover{
+    transform:scale(1.08);
+}
