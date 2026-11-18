@@ -1,5 +1,14 @@
 from imports import pygame, Image, os, time, sin, cos, radians, log2, ceil, degrees, atan2, pi, mean
 
+
+from pathlib import Path
+import sys
+
+def resource_path(relative_path):
+    base_path = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
+    return base_path / relative_path
+
+
 WIDTH, HEIGHT = 1920, 1080
 
 
@@ -25,8 +34,7 @@ minTurnSpeed = 0.05
 def create_sfx(fileNames):
     sfxItems = {}
     for file in fileNames:
-        sfxItems[file] = pygame.mixer.Sound(os.path.join("audio", "sfx", "screech" + ".mp3"))
-        # sfxItems[file] = pygame.mixer.Sound(os.path.join("audio", "sfx", file + ".mp3"))
+        sfxItems[file] = pygame.mixer.Sound(str(resource_path("assets/audio/sfx/screech.mp3")))
     return sfxItems
 
 class Cursor:
@@ -38,9 +46,9 @@ class Cursor:
         self.colorOne = (255, 255, 0)
         self.colorTwo = (255, 100, 0)
         self.colorThree = (255, 255, 255)
-        self.imageFile = os.path.join("Textures", "car", "RGBBlackCar.png")
+        self.imageFile = str(resource_path("assets/Textures/car/RGBBlackCar.png"))
         self.texture = pygame.transform.scale(
-            pygame.image.load(os.path.join("Textures", "car", "CarTexture.png")).convert_alpha(),
+            pygame.image.load(resource_path(str(("assets/Textures/car/CarTexture.png")))).convert_alpha(),
             (self.size, self.size))
         self.change_colors()
         self.angle = 0
@@ -270,7 +278,7 @@ class Track:
         self.shape = [[0 for _ in range(self.dimensions[0])] for _ in range(self.dimensions[1])]
         self.states = [[16 for _ in range(self.dimensions[0])] for _ in range(self.dimensions[1])]
         self.tiles = [pygame.transform.scale(
-            pygame.image.load(os.path.join("Textures", "Track", str(i) + ".png")), (self.tileSize, self.tileSize)) for i in reversed(range(16))]
+            pygame.image.load(str(resource_path("assets/Textures/Track/" + str(i) + ".png"))), (self.tileSize, self.tileSize)) for i in reversed(range(16))]
         self.car = Car(self.tileSize // 2, self)
     def import_shape(self, encodeString):
         number = 0
@@ -411,9 +419,9 @@ class Car:
         self.colorOne = (255, 255, 0)
         self.colorTwo = (0, 255, 255)
         self.colorThree = (255, 0, 255)
-        self.imageFile = os.path.join("Textures", "car", "RGBBlackCar.png")
+        self.imageFile = str(resource_path("assets/Textures/car/RGBBlackCar.png"))
         self.texture = pygame.transform.scale(
-            pygame.image.load(os.path.join("Textures", "car", "CarTexture.png")).convert_alpha(),
+            pygame.image.load(str(resource_path("assets/Textures/car/CarTexture.png"))).convert_alpha(),
             (self.size, self.size))
         self.change_colors()
         self.turnTime = time.time()
@@ -424,7 +432,7 @@ class Car:
         self.pivots = [pygame.Vector2(self.image.get_width() / 2, 0.2 * self.image.get_height()), pygame.Vector2(self.image.get_height() / 2)]
         self.pivotNum = 0
         
-        self.sfx = ["screech", "engine", "honk"]
+        self.sfx = ["screech/engine/honk"]
         self.loopSfx = ["engine"]
         self.sounds = create_sfx(self.sfx)
         self.playing = {sfx: 0 for sfx in self.sfx}

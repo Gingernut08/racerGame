@@ -1,9 +1,10 @@
 from imports import pygame, os, copy
-from assets import Cursor, Track, WIDTH, HEIGHT
+from assets import Cursor, Track, WIDTH, HEIGHT, resource_path
+
 
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.music.load(os.path.join("audio", "carSoundtrack" + ".mp3"))
+pygame.mixer.music.load(str(resource_path("assets/audio/carSoundtrack.mp3")))
 pygame.mixer.music.set_volume(0)
 pygame.mixer.music.play(-1)
 
@@ -11,7 +12,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.mouse.set_visible(False)
 pygame.display.set_caption("Car Colour Changer")
 
-cursor = pygame.transform.scale(pygame.image.load(os.path.join("Textures", "tempCursor" + ".png")), (50, 50))
+cursor = pygame.transform.scale(pygame.image.load(str(resource_path("assets/Textures/tempCursor.png"))), (50, 50))
 
 
 trackOne = Track(screen)
@@ -22,7 +23,7 @@ running = True
 bgColor = (150, 200, 150)
 
 state = 0
-with open(os.path.join("Saves", "tracks" + ".txt"), "r", encoding="utf-8") as file:
+with open(str(resource_path("assets/Saves/tracks.txt")), "r", encoding="utf-8") as file:
     trackValues = [line.strip() for line in file]
 trackValues.insert(0, "0000000000000000000000000000")
 trackIndex = 0
@@ -65,7 +66,7 @@ while running:
                 state %= 2
             if event.key == pygame.K_e:
                 text = trackOne.export_shape()
-                with open(os.path.join("Saves", "tracks" + ".txt"), "a") as file:
+                with open(str(resource_path("assets/Saves/tracks.txt")), "a") as file:
                     file.write(text + "\n")
                 trackValues.append(text)
                 copy(text)
